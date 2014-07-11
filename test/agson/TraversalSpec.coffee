@@ -51,6 +51,12 @@ describe 'agson.traversals', ->
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]
 
+      it 'obeys identity law', ->
+        {identity} = traversals
+        left = each.then(identity).run(['foo', 'bar'])
+        right = identity.then(each).run(['foo', 'bar'])
+        left.get().should.deep.equal right.get()
+
   describe 'filter', ->
     {filter} = traversals
     it 'accepts a predicate function to determine which items to traverse', ->
