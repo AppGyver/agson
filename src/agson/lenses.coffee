@@ -11,7 +11,12 @@ class Lens
   # Lens b c -> Lens a c
   then: (bc) => lens (a) =>
     # c -> Maybe a
-    set: notImplemented
+    set: (c) =>
+      abs = @run(a) # Store a b
+      abs.get().chain (b) ->
+        bcs = bc.run(b) # Store b c
+        bcs.set(c).chain (b) ->
+          abs.set b
 
     # () -> Maybe c
     get: =>
