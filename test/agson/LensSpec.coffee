@@ -70,6 +70,20 @@ describe 'agson.lenses', ->
       {traversal, nothing} = lenses
       traversal(nothing).run(['foo', 'bar']).get().should.deep.equal Just []
 
+    it 'sets each value in the array', ->
+      {traversal, identity} = lenses
+      traversal(identity).run([
+        'foo'
+        'bar'
+      ]).set('qux').should.deep.equal Just ['qux', 'qux']
+
+    it 'modifies each value in the array by giving out the value', ->
+      {traversal, identity} = lenses
+      traversal(identity).run([
+        'foo'
+        'bar'
+      ]).modify((v) -> v + 'qux').should.deep.equal Just ['fooqux', 'barqux']
+
     it 'allows picking values from objects when combined with property', ->
       {traversal, property} = lenses
       traversal(property('foo')).run([

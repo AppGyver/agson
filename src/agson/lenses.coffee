@@ -42,6 +42,7 @@ store = (s) ->
   new class extends Store
     set: s.set or notImplemented
     get: s.get or notImplemented
+    modify: s.modify or Store::modify
 
 # (a -> { set: b -> Maybe a, get: () -> Maybe b }) -> Lens a b
 lens = (fs) ->
@@ -75,7 +76,15 @@ traversal = (abl) -> lens (array) ->
   if !array?
     throw new TypeError "Input array must not be null"
 
-  set: Nothing
+  set: (v) -> @modify -> v
+
+  modify: (f) ->
+    aList = []
+    for a in array
+      maybeA = abl.run(a).modify(f)
+      if maybeA.isJust
+        aList.push maybeA.get()
+    Just aList
 
   get: ->
     bList = []
