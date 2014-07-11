@@ -3,18 +3,19 @@ require('chai').should()
 lenses = require '../../src/agson/lenses'
 
 laws =
-  identity: (lens) -> ({run, set}) ->
+  identity: (lens) -> ({runAll, run, set}) ->
     {identity} = lenses
     describe 'identity law', ->
-      left = right = null
-      before ->
-        left = identity.then(lens).run(run)
-        right = lens.then(identity).run(run)
-
       it 'holds for set', ->
-        left.set(set).should.deep.equal right.set(set)
+        for data in runAll || [run]
+          left = identity.then(lens).run(data)
+          right = lens.then(identity).run(data)
+          left.set(set).should.deep.equal right.set(set)
       it 'holds for get', ->
-        left.get().should.deep.equal right.get()
+        for data in runAll || [run]
+          left = identity.then(lens).run(data)
+          right = lens.then(identity).run(data)
+          left.get().should.deep.equal right.get()
 
 describe 'agson.lenses', ->
   describe 'nothing', ->
@@ -76,7 +77,10 @@ describe 'agson.lenses', ->
         }
 
       laws.identity(property('foo')) {
-        run: { foo: 'bar' }
+        runAll: [
+          { foo: 'bar' }
+          {}
+        ]
         set: 'qux'
       }
 
@@ -91,6 +95,15 @@ describe 'agson.lenses', ->
     it 'can decide whether setting a provided lens will succeed', ->
       strings.run(123).set('foo').should.deep.equal Just 'foo'
       strings.run('foo').set(123).should.deep.equal Nothing()
+
+    describe 'composition', ->
+      laws.identity(strings) {
+        runAll: [
+          'foo'
+          123
+        ]
+        modify: (v) -> v + 'bar'
+      }
 
 
   describe 'definedAt', ->
