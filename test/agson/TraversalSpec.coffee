@@ -66,6 +66,12 @@ describe 'agson.traversals', ->
         .get()
         .should.deep.equal ['foo']
 
+    it 'modifies only the matching items', ->
+      strings
+        .run(['foo', 123])
+        .set('bar')
+        .should.deep.equal ['bar', 123]
+
 
   describe 'accept', ->
     {accept} = traversals

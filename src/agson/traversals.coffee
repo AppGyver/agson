@@ -16,7 +16,11 @@ each = traversal (traversable) ->
 
 filter = (predicate) -> traversal (traversable) ->
   modify: (f) ->
-    f a for a in traversable when predicate a
+    for a in traversable
+      if predicate a
+        f a
+      else
+        a
   get: ->
     a for a in traversable when predicate a
 
