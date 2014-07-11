@@ -2,6 +2,20 @@
 require('chai').should()
 lenses = require '../../src/agson/lenses'
 
+laws =
+  identity: (lens) -> ({run, set}) ->
+    {identity} = lenses
+    describe 'identity law', ->
+      left = right = null
+      before ->
+        left = identity.then(lens).run(run)
+        right = lens.then(identity).run(run)
+
+      it 'holds for set', ->
+        left.set(set).should.deep.equal right.set(set)
+      it 'holds for get', ->
+        left.get().should.deep.equal right.get()
+
 describe 'agson.lenses', ->
   describe 'nothing', ->
     {nothing} = lenses
@@ -24,23 +38,23 @@ describe 'agson.lenses', ->
       identity.run('foo')
         .modify((v) -> v + 'bar')
         .should.deep.equal Just 'foobar'
-    it 'obeys identity law', ->
-      identity.then(identity).run('foo').get().should.deep.equal Just 'foo'
-      identity.then(identity).run('whatever').set('foo').should.deep.equal Just 'foo'
+
+    laws.identity(identity) {
+      run: 'foo'
+      set: 'bar'
+    }
 
   describe 'constant', ->
+    {constant} = lenses
     it 'ignores value', ->
-      lenses.constant('foo').run('whatever').get().should.deep.equal Just 'foo'
+      constant('foo').run('whatever').get().should.deep.equal Just 'foo'
     it 'ignores set', ->
-      lenses.constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
-    it 'obeys identity law', ->
-      [id, foo] = [lenses.identity, lenses.constant('foo')]
+      constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
 
-      foo.then(id).run('whatever').get().should.deep.equal Just 'foo'
-      foo.then(id).run('whatever').set('anything').should.deep.equal Nothing()
-
-      id.then(foo).run('whatever').get().should.deep.equal Just 'foo'
-      id.then(foo).run('whatever').set('anything').should.deep.equal Nothing()
+    laws.identity(constant('foo')) {
+      run: 'bar'
+      set: 'bar'
+    }
 
   describe 'property', ->
     it 'gets a property on an object', ->
