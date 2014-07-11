@@ -1,8 +1,46 @@
 {Just, Nothing, fromNullable} = require 'data.maybe'
 
-lens = (ab) ->
-  new class
-    run: ab
+notImplemented = -> throw new Error 'not implemented'
+
+# Lens a b
+class Lens
+
+  # a -> Store a b
+  run: notImplemented
+
+  # Lens b c -> Lens a c
+  then: (bc) => lens (a) =>
+    # c -> Maybe a
+    set: notImplemented
+
+    # () -> Maybe c
+    get: =>
+      @run(a).get().chain (b) ->
+        bc.run(b).get()
+
+# Store a b
+class Store
+
+  # b -> Maybe a
+  set: notImplemented
+
+  # () -> Maybe b
+  get: notImplemented
+
+  # (b -> b) -> Maybe a
+  modify: (f) ->
+    @get().map(f).chain @set
+
+# { set: b -> Maybe a, get: () -> Maybe b } -> Store a b
+store = (s) ->
+  new class extends Store
+    set: s.set or notImplemented
+    get: s.get or notImplemented
+
+# (a -> { set: b -> Maybe a, get: () -> Maybe b }) -> Lens a b
+lens = (fs) ->
+  new class extends Lens
+    run: (a) -> store fs a
 
 identity = lens (a) ->
   set: (b) -> Just b

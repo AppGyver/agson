@@ -24,3 +24,11 @@ describe 'agson.lenses', ->
       lenses.property('foo').run({ foo: 'whatever'}).set('bar').should.deep.equal Just {
         foo: 'bar'
       }
+
+  describe 'composition', ->
+    it 'obeys identity law', ->
+      lenses.identity.then(lenses.identity).run('foo').get().should.deep.equal Just 'foo'
+
+      lenses.constant('foo').then(lenses.identity).run('whatever').get().should.deep.equal Just 'foo'
+
+      lenses.identity.then(lenses.constant('foo')).run('whatever').get().should.deep.equal Just 'foo'
