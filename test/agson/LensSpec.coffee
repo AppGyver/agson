@@ -57,22 +57,28 @@ describe 'agson.lenses', ->
     }
 
   describe 'property', ->
+    {property} = lenses
     it 'gets a property on an object', ->
-      lenses.property('foo').run({ foo: 'bar' }).get().should.deep.equal Just 'bar'
-      lenses.property('bar').run({}).get().should.deep.equal Nothing()
+      property('foo').run({ foo: 'bar' }).get().should.deep.equal Just 'bar'
+      property('bar').run({}).get().should.deep.equal Nothing()
 
     it 'sets a property on an object', ->
-      lenses.property('foo').run({ foo: 'whatever'}).set('bar').should.deep.equal Just {
+      property('foo').run({ foo: 'whatever'}).set('bar').should.deep.equal Just {
         foo: 'bar'
       }
 
     describe 'composition', ->
       it 'allows access to nested objects', ->
-        [foo, bar] = [lenses.property('foo'), lenses.property('bar')]
+        [foo, bar] = [property('foo'), property('bar')]
         foo.then(bar).run({ foo: bar: 'qux' }).get().should.deep.equal Just 'qux'
         foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
           foo: bar: 'baz'
         }
+
+      laws.identity(property('foo')) {
+        run: { foo: 'bar' }
+        set: 'qux'
+      }
 
   describe 'filter', ->
     {filter, identity} = lenses
