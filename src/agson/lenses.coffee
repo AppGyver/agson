@@ -10,6 +10,23 @@ class Traversal
   # Traversal b c -> Traversal a c
   then: notImplemented
 
+traversal = new class extends Traversal
+  run: (traversable) ->
+    store(
+      set: (b) ->
+        Just (
+          b for a in traversable
+        )
+
+      modify: (f) ->
+        Just (
+          f a for a in traversable
+        )
+      
+      get: ->
+        Just traversable
+    )
+
 # Lens a b
 class Lens
 
@@ -87,25 +104,6 @@ maybeMap = (xs, f) ->
     if maybeY.isJust
       ys.push maybeY.get()
   ys
-
-traversal = new class extends Traversal
-  run: (a) ->
-    @then(identity).run(a)
-  
-  then: (l) -> lens (array) ->
-
-    set: (b) ->
-      Just maybeMap array, (a)->
-        l.run(a).set(b)
-
-    modify: (f) ->
-      Just maybeMap array, (a) ->
-        l.run(a).modify(f)
-    
-    get: ->
-      Just maybeMap array, (a) ->
-        l.run(a).get()
-
 
 # (a -> boolean) -> Lens a a
 filter = (predicate) -> lens (a) ->
