@@ -27,11 +27,12 @@ describe 'agson.lenses', ->
 
   describe 'composition', ->
     it 'obeys identity law', ->
-      lenses.identity.then(lenses.identity).run('foo').get().should.deep.equal Just 'foo'
-      lenses.identity.then(lenses.identity).run('whatever').set('foo').should.deep.equal Just 'foo'
+      [id, foo] = [lenses.identity, lenses.constant('foo')]
+      id.then(id).run('foo').get().should.deep.equal Just 'foo'
+      id.then(id).run('whatever').set('foo').should.deep.equal Just 'foo'
 
-      lenses.constant('foo').then(lenses.identity).run('whatever').get().should.deep.equal Just 'foo'
-      lenses.constant('foo').then(lenses.identity).run('whatever').set('anything').should.deep.equal Nothing()
+      foo.then(id).run('whatever').get().should.deep.equal Just 'foo'
+      foo.then(id).run('whatever').set('anything').should.deep.equal Nothing()
 
-      lenses.identity.then(lenses.constant('foo')).run('whatever').get().should.deep.equal Just 'foo'
-      lenses.identity.then(lenses.constant('foo')).run('whatever').set('anything').should.deep.equal Nothing()
+      id.then(foo).run('whatever').get().should.deep.equal Just 'foo'
+      id.then(foo).run('whatever').set('anything').should.deep.equal Nothing()
