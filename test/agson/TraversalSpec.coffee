@@ -4,12 +4,18 @@ lenses = require '../../src/agson/lenses'
 
 laws =
   identity: (traversal) -> ({run, modify}) ->
-    it 'obeys identity law', ->
-      {identity} = traversals
-      left = traversal.then(identity).run(run)
-      right = identity.then(traversal).run(run)
-      left.get().should.deep.equal right.get()
-      left.modify(modify).should.deep.equal right.modify(modify)
+    {identity} = traversals
+    describe 'identity law', ->
+      left = right = null
+      before ->
+        left = traversal.then(identity).run(run)
+        right = identity.then(traversal).run(run)
+
+      it 'holds for get', ->
+        left.get().should.deep.equal right.get()
+      
+      it 'holds for set', ->
+        left.modify(modify).should.deep.equal right.modify(modify)
 
 describe 'agson.traversals', ->
 
