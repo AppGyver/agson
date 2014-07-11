@@ -1,4 +1,13 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_install: npm install -g grunt-cli
+deploy:
+  provider: npm
+  email: eevert.saukkokoski@appgyver.com
+  api_key:
+    secure: m6EF1XL5a6897/8xqwD1O72g7tfgKDYsd0UtWy6l0PmjMpDxYb+VBurJIqMchHkHbw+Vy/2glLlYPigdZVrv6v8r2pxtAvQxJLaUs6gdpaccZrlof8KDmn5CXJjEVZL8sGGjhJSujQsyL3fes7ga2Pe1DBUlAcot1za6WAisWqc=
+  on:
+    tags: true
+    all_branches: true
+    repo: AppGyver/agson
