@@ -20,8 +20,22 @@ filter = (predicate) -> traversal (traversable) ->
   get: ->
     a for a in traversable when predicate a
 
+accept = (predicate) -> traversal (traversable) ->
+  modify: (f) ->
+    result = f traversable
+    if predicate result
+      result
+    else
+      []
+  get: ->
+    if predicate traversable
+      traversable
+    else
+      []
+
 module.exports = {
   identity
   each
   filter
+  accept
 }

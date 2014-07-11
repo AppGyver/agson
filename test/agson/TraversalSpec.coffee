@@ -59,8 +59,28 @@ describe 'agson.traversals', ->
 
   describe 'filter', ->
     {filter} = traversals
+    strings = filter((v) -> typeof v is 'string')
     it 'accepts a predicate function to determine which items to traverse', ->
-      filter((v) -> typeof v is 'string')
+      strings
         .run(['foo', 123])
         .get()
         .should.deep.equal ['foo']
+
+
+  describe 'accept', ->
+    {accept} = traversals
+    strings = accept (v) -> typeof v is 'string'
+
+    it 'accepts a predicate function to determine which collections to traverse', ->
+      strings
+        .run('foo')
+        .get()
+        .should.equal 'foo'
+
+    describe 'composition', ->
+      it 'obeys identity law', ->
+        {identity} = traversals
+        left = strings.then(identity).run('foo')
+        right = identity.then(strings).run('foo')
+        left.get().should.deep.equal right.get()
+
