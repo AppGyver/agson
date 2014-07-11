@@ -1,0 +1,32 @@
+{
+  "name": "agson",
+  "version": "0.0.0",
+  "description": "Querying and manipulating JSON graphs",
+  "main": "lib/agson.js",
+  "scripts": {
+    "test": "grunt test",
+    "prepublish": "grunt compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AppGyver/agson.git"
+  },
+  "keywords": [],
+  "author": "Eevert Saukkokoski <eevert.saukkokoski@appgyver.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AppGyver/agson/issues"
+  },
+  "homepage": "https://github.com/AppGyver/agson",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "grunt": "^0.4.5",
+    "grunt-coffeelint": "0.0.10",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-coffee": "^0.10.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-test": "^0.11.0",
+    "load-grunt-config": "^0.12.0",
+    "load-grunt-tasks": "^0.6.0"
+  }
+}
