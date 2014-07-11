@@ -14,3 +14,13 @@ describe 'agson.lenses', ->
       lenses.constant('foo').run('whatever').get().should.deep.equal Just 'foo'
     it 'ignores set', ->
       lenses.constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
+
+  describe 'property', ->
+    it 'gets a property on an object', ->
+      lenses.property('foo').run({ foo: 'bar' }).get().should.deep.equal Just 'bar'
+      lenses.property('bar').run({}).get().should.deep.equal Nothing()
+
+    it 'sets a property on an object', ->
+      lenses.property('foo').run({ foo: 'whatever'}).set('bar').should.deep.equal Just {
+        foo: 'bar'
+      }
