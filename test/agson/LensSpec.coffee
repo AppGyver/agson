@@ -61,13 +61,9 @@ describe 'agson.lenses', ->
         }
 
   describe 'traversal', ->
-    it 'is a lens in its own right', ->
+    it 'does nothing on its own', ->
       {traversal} = lenses
       traversal.run(['foo', 'bar']).get().should.deep.equal Just ['foo', 'bar']
-
-    it 'removes elements that get fails on', ->
-      {traversal, nothing} = lenses
-      traversal.then(nothing).run(['foo', 'bar']).get().should.deep.equal Just []
 
     it 'sets each value in the array', ->
       {traversal} = lenses
@@ -83,18 +79,24 @@ describe 'agson.lenses', ->
         'bar'
       ]).modify((v) -> v + 'qux').should.deep.equal Just ['fooqux', 'barqux']
 
-    it 'allows picking values from objects when combined with property', ->
-      {traversal, property} = lenses
-      traversal.then(property('foo')).run([
-        { foo: 'bar' }
-        { foo: 'qux' }
-      ]).get().should.deep.equal Just ['bar', 'qux']
+    describe 'composition', ->
 
-    it 'obeys identity', ->
-      {traversal, identity} = lenses
-      right = identity.then(traversal)
-      left = traversal.then(identity)
-      right.run(['bar', 'qux']).get().should.deep.equal left.run(['bar', 'qux']).get()
+      it 'removes elements that get fails on', ->
+        {traversal, nothing} = lenses
+        traversal.then(nothing).run(['foo', 'bar']).get().should.deep.equal Just []
+
+      it 'allows picking values from objects when combined with property', ->
+        {traversal, property} = lenses
+        traversal.then(property('foo')).run([
+          { foo: 'bar' }
+          { foo: 'qux' }
+        ]).get().should.deep.equal Just ['bar', 'qux']
+
+      it 'obeys identity', ->
+        {traversal, identity} = lenses
+        right = identity.then(traversal)
+        left = traversal.then(identity)
+        right.run(['bar', 'qux']).get().should.deep.equal left.run(['bar', 'qux']).get()
 
   describe 'filter', ->
     {filter, identity} = lenses

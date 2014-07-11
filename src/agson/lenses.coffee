@@ -2,6 +2,14 @@
 
 notImplemented = -> throw new Error 'not implemented'
 
+# Traversal a b
+class Traversal
+  # a -> Store a b
+  run: notImplemented
+
+  # Traversal b c -> Traversal a c
+  then: notImplemented
+
 # Lens a b
 class Lens
 
@@ -80,12 +88,10 @@ maybeMap = (xs, f) ->
       ys.push maybeY.get()
   ys
 
-class Traversal
-  then: notImplemented
+traversal = new class extends Traversal
   run: (a) ->
     @then(identity).run(a)
-
-traversal = new class extends Traversal
+  
   then: (l) -> lens (array) ->
 
     set: (b) ->
