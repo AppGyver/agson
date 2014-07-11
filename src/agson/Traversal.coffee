@@ -24,6 +24,10 @@ module.exports = class Traversal
         result = result.concat traversal.run(t).get()
       result
 
+    modify: (f) ->
+      for t in traversable
+        traversal.run(t).modify f
+
   # (a -> { get, modify, set? }) -> Traversal a b
   @of: (fs) ->
     new class extends Traversal
