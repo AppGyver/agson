@@ -10,7 +10,7 @@ class Lens
 
   # Lens b c -> Lens a c
   then: (bc) => lens (a) =>
-    
+
     # c -> Maybe a
     set: (c) =>
       abs = @run(a) # Store a b
@@ -71,9 +71,24 @@ property = (key) -> lens (object) ->
   get: ->
     fromNullable object[key]
 
+traversal = (abl) -> lens (array) ->
+  if !array?
+    throw new TypeError "Input array must not be null"
+
+  set: Nothing
+
+  get: ->
+    bList = []
+    for a in array
+      maybeB = abl.run(a).get()
+      if maybeB.isJust
+        bList.push maybeB.get()
+    Just bList
+
 module.exports = {
   nothing
   identity
   constant
   property
+  traversal
 }

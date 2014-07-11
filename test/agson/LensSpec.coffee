@@ -59,3 +59,20 @@ describe 'agson.lenses', ->
       nothing.run('foo')
         .modify(-> throw new Error 'should not get here')
         .should.deep.equal Nothing()
+
+  describe 'traversal', ->
+    it 'accepts a lens to traverse an array with', ->
+      {traversal, identity, constant} = lenses
+      traversal(identity).run(['foo', 'bar']).get().should.deep.equal Just ['foo', 'bar']
+      traversal(constant('qux')).run(['foo', 'bar']).get().should.deep.equal Just ['qux', 'qux']
+
+    it 'removes elements that get fails on', ->
+      {traversal, nothing} = lenses
+      traversal(nothing).run(['foo', 'bar']).get().should.deep.equal Just []
+
+    it 'allows picking values from objects when combined with property', ->
+      {traversal, property} = lenses
+      traversal(property('foo')).run([
+        { foo: 'bar' }
+        { foo: 'qux' }
+      ]).get().should.deep.equal Just ['bar', 'qux']
