@@ -39,11 +39,3 @@ describe 'agson.traversals', ->
         .run(['foo', 123])
         .get()
         .should.deep.equal ['foo']
-
-    it 'obeys identity law', ->
-      {identity} = traversals
-      left = identity.then filter((v) -> typeof v is 'string')
-      right = filter((v) -> typeof v is 'string').then identity
-
-      left.run([['foo'], [123]]).get().should.deep.equal right.run([['foo'], [123]]).get()
-

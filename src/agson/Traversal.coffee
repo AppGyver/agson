@@ -17,11 +17,11 @@ module.exports = class Traversal
   run: notImplemented
 
   # Traversal b c -> Traversal a c
-  then: (traversal) -> Traversal.of (traversable) ->
-    get: ->
+  then: (traversal) => Traversal.of (traversable) =>
+    get: =>
       result = []
-      for t in traversable
-        result = result.concat traversal.run(t).get()
+      for b in @run(traversable).get()
+        result = result.concat traversal.run(b).get()
       result
 
     modify: (f) ->
