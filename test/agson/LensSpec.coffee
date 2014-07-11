@@ -85,11 +85,17 @@ describe 'agson.lenses', ->
       ]).modify((v) -> v + 'qux').should.deep.equal Just ['fooqux', 'barqux']
 
     it 'allows picking values from objects when combined with property', ->
-      {traversal, property} = lenses
+      {traversal, identity, property} = lenses
       traversal(property('foo')).run([
         { foo: 'bar' }
         { foo: 'qux' }
       ]).get().should.deep.equal Just ['bar', 'qux']
+
+    it 'obeys identity', ->
+      {traversal, constant, identity} = lenses
+      right = traversal(constant 'foo').then(identity)
+      left = traversal(identity).then(constant 'foo')
+      right.run(['bar', 'qux']).get().should.deep.equal left.run(['bar', 'qux']).get()
 
   describe 'filter', ->
     {filter, identity} = lenses
