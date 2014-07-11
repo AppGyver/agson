@@ -13,7 +13,7 @@ laws =
 
       it 'holds for get', ->
         left.get().should.deep.equal right.get()
-      
+
       it 'holds for set', ->
         left.modify(modify).should.deep.equal right.modify(modify)
 
@@ -74,17 +74,17 @@ describe 'agson.traversals', ->
   describe 'where', ->
     {where} = traversals
     strings = where((v) -> typeof v is 'string')
-    it 'accepts a predicate function to determine which items to traverse', ->
-      strings
-        .run(['foo', 123])
-        .get()
-        .should.deep.equal ['foo']
-
-    it 'modifies only the matching items', ->
+    it 'accepts a predicate function to determine which items to select for update', ->
       strings
         .run(['foo', 123])
         .set('bar')
         .should.deep.equal ['bar', 123]
+
+    describe 'composition', ->
+      laws.identity(strings) {
+        run: ['foo', 123]
+        modify: (v) -> v + 'qux'
+      }
 
 
   describe 'accept', ->
