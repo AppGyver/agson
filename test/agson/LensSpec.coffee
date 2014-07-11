@@ -4,16 +4,26 @@ lenses = require '../../src/agson/lenses'
 
 describe 'agson.lenses', ->
   describe 'nothing', ->
+    {nothing} = lenses
     it 'gets nothing', ->
-      lenses.nothing.run('anything').get().should.deep.equal Nothing()
+      nothing.run('anything').get().should.deep.equal Nothing()
     it 'sets the same value as passed', ->
-      lenses.nothing.run('anything').set('bar').should.deep.equal Just 'bar'
+      nothing.run('anything').set('bar').should.deep.equal Just 'bar'
+    it 'refuses modification', ->
+      nothing.run('foo')
+        .modify(-> throw new Error 'should not get here')
+        .should.deep.equal Nothing()
 
   describe 'identity', ->
+    {identity} = lenses
     it 'gets the same value as passed', ->
-      lenses.identity.run('foo').get().should.deep.equal Just 'foo'
+      identity.run('foo').get().should.deep.equal Just 'foo'
     it 'sets the same value as passed', ->
-      lenses.identity.run('foo').set('bar').should.deep.equal Just 'bar'
+      identity.run('foo').set('bar').should.deep.equal Just 'bar'
+    it 'modifies value with the same value as passed', ->
+      identity.run('foo')
+        .modify((v) -> v + 'bar')
+        .should.deep.equal Just 'foobar'
 
   describe 'constant', ->
     it 'ignores value', ->
@@ -49,16 +59,6 @@ describe 'agson.lenses', ->
       foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
         foo: bar: 'baz'
       }
-
-  describe 'modification', ->
-    it 'sets new value if get succeeds', ->
-      {identity, nothing} = lenses
-      identity.run('foo')
-        .modify((v) -> v + 'bar')
-        .should.deep.equal Just 'foobar'
-      nothing.run('foo')
-        .modify(-> throw new Error 'should not get here')
-        .should.deep.equal Nothing()
 
   describe 'traversal', ->
     it 'accepts a lens to traverse an array with', ->
