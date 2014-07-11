@@ -31,3 +31,11 @@ describe 'agson.traversals', ->
           .run([['foo'], ['bar']])
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]
+
+  describe 'filter', ->
+    {filter} = traversals
+    it 'accepts a predicate function to determine which items to traverse', ->
+      filter((v) -> typeof v is 'string')
+        .run(['foo', 123])
+        .get()
+        .should.deep.equal ['foo']
