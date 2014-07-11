@@ -49,3 +49,13 @@ describe 'agson.lenses', ->
       foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
         foo: bar: 'baz'
       }
+
+  describe 'modification', ->
+    it 'sets new value if get succeeds', ->
+      {identity, nothing} = lenses
+      identity.run('foo')
+        .modify((v) -> v + 'bar')
+        .should.deep.equal Just 'foobar'
+      nothing.run('foo')
+        .modify(-> throw new Error 'should not get here')
+        .should.deep.equal Nothing()
