@@ -18,3 +18,10 @@ describe 'agson.traversals', ->
         'foo'
         'bar'
       ]).modify((v) -> v + 'qux').should.deep.equal ['fooqux', 'barqux']
+
+    describe 'composition', ->
+      it 'recurses into sublists', ->
+        identity.then(identity)
+          .run([['foo'], ['bar']])
+          .get()
+          .should.deep.equal ['foo', 'bar']
