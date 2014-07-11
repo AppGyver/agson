@@ -89,4 +89,4 @@ describe 'agson.traversals', ->
         left = strings.then(identity).run('foo')
         right = identity.then(strings).run('foo')
         left.get().should.deep.equal right.get()
-
+        left.set('bar').should.deep.equal right.set('bar')
