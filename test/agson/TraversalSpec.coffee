@@ -1,33 +1,52 @@
 require('chai').should()
 traversals = require '../../src/agson/traversals'
+lenses = require '../../src/agson/lenses'
 
 describe 'agson.traversals', ->
+
   describe 'identity', ->
     {identity} = traversals
+    it 'accepts a value and gets it', ->
+      identity.run(['foo', 'bar'])
+        .get()
+        .should.deep.equal ['foo', 'bar']
+    
+    it 'returns value that is set', ->
+      identity.run([])
+        .set(['foo'])
+        .should.deep.equal ['foo']
+
+    it 'modifies using provided value', ->
+      identity.run(['foo'])
+        .modify((list) -> list.concat ['bar'])
+        .should.deep.equal ['foo', 'bar']
+
+  describe 'each', ->
+    {each} = traversals
     it 'gets each value in the array', ->
-      identity.run(['foo', 'bar']).get().should.deep.equal ['foo', 'bar']
+      each.run(['foo', 'bar']).get().should.deep.equal ['foo', 'bar']
 
     it 'sets each value in the array', ->
-      identity.run([
+      each.run([
         'foo'
         'bar'
       ]).set('qux').should.deep.equal ['qux', 'qux']
 
     it 'modifies each value in the array by giving out the value', ->
-      identity.run([
+      each.run([
         'foo'
         'bar'
       ]).modify((v) -> v + 'qux').should.deep.equal ['fooqux', 'barqux']
 
     describe 'composition', ->
       it 'flattens sublists', ->
-        identity.then(identity)
+        each.then(each)
           .run([['foo'], ['bar']])
           .get()
           .should.deep.equal ['foo', 'bar']
 
       it 'modifies sublist values', ->
-        identity.then(identity)
+        each.then(each)
           .run([['foo'], ['bar']])
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]

@@ -4,6 +4,12 @@ traversal = Traversal.of
 
 identity = traversal (traversable) ->
   modify: (f) ->
+    f traversable
+  get: ->
+    traversable
+
+each = traversal (traversable) ->
+  modify: (f) ->
     f a for a in traversable
   get: ->
     traversable
@@ -16,5 +22,6 @@ filter = (predicate) -> traversal (traversable) ->
 
 module.exports = {
   identity
+  each
   filter
 }
