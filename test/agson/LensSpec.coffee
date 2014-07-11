@@ -24,12 +24,23 @@ describe 'agson.lenses', ->
       identity.run('foo')
         .modify((v) -> v + 'bar')
         .should.deep.equal Just 'foobar'
+    it 'obeys identity law', ->
+      identity.then(identity).run('foo').get().should.deep.equal Just 'foo'
+      identity.then(identity).run('whatever').set('foo').should.deep.equal Just 'foo'
 
   describe 'constant', ->
     it 'ignores value', ->
       lenses.constant('foo').run('whatever').get().should.deep.equal Just 'foo'
     it 'ignores set', ->
       lenses.constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
+    it 'obeys identity law', ->
+      [id, foo] = [lenses.identity, lenses.constant('foo')]
+
+      foo.then(id).run('whatever').get().should.deep.equal Just 'foo'
+      foo.then(id).run('whatever').set('anything').should.deep.equal Nothing()
+
+      id.then(foo).run('whatever').get().should.deep.equal Just 'foo'
+      id.then(foo).run('whatever').set('anything').should.deep.equal Nothing()
 
   describe 'property', ->
     it 'gets a property on an object', ->
@@ -41,24 +52,13 @@ describe 'agson.lenses', ->
         foo: 'bar'
       }
 
-  describe 'composition', ->
-    it 'obeys identity law', ->
-      [id, foo] = [lenses.identity, lenses.constant('foo')]
-      id.then(id).run('foo').get().should.deep.equal Just 'foo'
-      id.then(id).run('whatever').set('foo').should.deep.equal Just 'foo'
-
-      foo.then(id).run('whatever').get().should.deep.equal Just 'foo'
-      foo.then(id).run('whatever').set('anything').should.deep.equal Nothing()
-
-      id.then(foo).run('whatever').get().should.deep.equal Just 'foo'
-      id.then(foo).run('whatever').set('anything').should.deep.equal Nothing()
-
-    it 'allows access to nested objects', ->
-      [foo, bar] = [lenses.property('foo'), lenses.property('bar')]
-      foo.then(bar).run({ foo: bar: 'qux' }).get().should.deep.equal Just 'qux'
-      foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
-        foo: bar: 'baz'
-      }
+    describe 'composition', ->
+      it 'allows access to nested objects', ->
+        [foo, bar] = [lenses.property('foo'), lenses.property('bar')]
+        foo.then(bar).run({ foo: bar: 'qux' }).get().should.deep.equal Just 'qux'
+        foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
+          foo: bar: 'baz'
+        }
 
   describe 'traversal', ->
     it 'is a lens in its own right', ->
