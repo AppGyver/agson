@@ -3,6 +3,12 @@ require('chai').should()
 lenses = require '../../src/agson/lenses'
 
 describe 'agson.lenses', ->
+  describe 'nothing', ->
+    it 'gets nothing', ->
+      lenses.nothing.run('anything').get().should.deep.equal Nothing()
+    it 'sets the same value as passed', ->
+      lenses.nothing.run('anything').set('bar').should.deep.equal Just 'bar'
+
   describe 'identity', ->
     it 'gets the same value as passed', ->
       lenses.identity.run('foo').get().should.deep.equal Just 'foo'

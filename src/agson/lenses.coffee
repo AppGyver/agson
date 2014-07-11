@@ -47,6 +47,10 @@ lens = (fs) ->
   new class extends Lens
     run: (a) -> store fs a
 
+nothing = lens ->
+  set: (b) -> Just b
+  get: Nothing
+
 identity = lens (a) ->
   set: (b) -> Just b
   get: -> Just a
@@ -67,6 +71,7 @@ property = (key) -> lens (object) ->
     fromNullable object[key]
 
 module.exports = {
+  nothing
   identity
   constant
   property
