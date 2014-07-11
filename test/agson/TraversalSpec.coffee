@@ -57,9 +57,9 @@ describe 'agson.traversals', ->
         right = identity.then(each).run(['foo', 'bar'])
         left.get().should.deep.equal right.get()
 
-  describe 'filter', ->
-    {filter} = traversals
-    strings = filter((v) -> typeof v is 'string')
+  describe 'where', ->
+    {where} = traversals
+    strings = where((v) -> typeof v is 'string')
     it 'accepts a predicate function to determine which items to traverse', ->
       strings
         .run(['foo', 123])

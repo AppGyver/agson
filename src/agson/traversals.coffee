@@ -14,7 +14,7 @@ each = traversal (traversable) ->
   get: ->
     traversable
 
-filter = (predicate) -> traversal (traversable) ->
+where = (predicate) -> traversal (traversable) ->
   modify: (f) ->
     for a in traversable
       if predicate a
@@ -40,6 +40,6 @@ accept = (predicate) -> traversal (traversable) ->
 module.exports = {
   identity
   each
-  filter
+  where
   accept
 }
