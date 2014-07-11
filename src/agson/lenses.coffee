@@ -80,24 +80,26 @@ maybeMap = (xs, f) ->
       ys.push maybeY.get()
   ys
 
-# Lens a b -> [a] -> Lens [a] [b]
-traversal = (abl) ->
-  new class extends Lens
-    run: (array) ->
-      if !array?
-        throw new TypeError "Input array must not be null"
+class Traversal
+  then: notImplemented
+  run: (a) ->
+    @then(identity).run(a)
 
-      store(
-        set: (v) -> @modify -> v
+traversal = new class extends Traversal
+  then: (l) -> lens (array) ->
 
-        modify: (f) ->
-          Just maybeMap array, (a) ->
-            abl.run(a).modify(f)
+    set: (b) ->
+      Just maybeMap array, (a)->
+        l.run(a).set(b)
 
-        get: ->
-          Just maybeMap array, (a) ->
-            abl.run(a).get()
-      )
+    modify: (f) ->
+      Just maybeMap array, (a) ->
+        l.run(a).modify(f)
+    
+    get: ->
+      Just maybeMap array, (a) ->
+        l.run(a).get()
+
 
 # (a -> boolean) -> Lens a a
 filter = (predicate) -> lens (a) ->
