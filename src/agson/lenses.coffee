@@ -95,20 +95,23 @@ traversal = (abl) -> lens (array) ->
     Just maybeMap array, (a) ->
       abl.run(a).get()
 
-# (b -> boolean) -> Lens a b -> Lens a b
-filter = (predicate) -> (abl) -> lens (a) ->
-  set: (b) ->
-    if predicate b
-      abl.run(a).set(b)
+# (a -> boolean) -> Lens a a
+filter = (predicate) -> lens (a) ->
+  set: (a) ->
+    if predicate a
+      Just a
     else
       Nothing()
 
   get: ->
-    abl.run(a).get().chain (b) ->
-      if predicate b
-        Just b
-      else
-        Nothing()
+    if predicate a
+      Just a
+    else
+      Nothing()
+
+# Lens a b -> (a -> boolean)
+definedAt = (abl) -> (a) ->
+  abl.run(a).get().isJust
 
 module.exports = {
   nothing
@@ -117,4 +120,5 @@ module.exports = {
   property
   traversal
   filter
+  definedAt
 }

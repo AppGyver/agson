@@ -93,12 +93,26 @@ describe 'agson.lenses', ->
 
   describe 'filter', ->
     {filter, identity} = lenses
-    strings = (a) -> typeof a is 'string'
+    strings = filter (a) -> typeof a is 'string'
 
     it 'can decide whether getting a provided lens will succeed', ->
-      filter(strings)(identity).run('foo').get().should.deep.equal Just 'foo'
-      filter(strings)(identity).run(123).get().should.deep.equal Nothing()
+      strings.run('foo').get().should.deep.equal Just 'foo'
+      strings.run(123).get().should.deep.equal Nothing()
 
     it 'can decide whether setting a provided lens will succeed', ->
-      filter(strings)(identity).run(123).set('foo').should.deep.equal Just 'foo'
-      filter(strings)(identity).run('foo').set(123).should.deep.equal Nothing()
+      strings.run(123).set('foo').should.deep.equal Just 'foo'
+      strings.run('foo').set(123).should.deep.equal Nothing()
+
+
+  describe 'definedAt', ->
+    {filter, definedAt, property} = lenses
+    withFoo = definedAt property 'foo'
+
+    it 'will succeed if getting succeeds', ->
+      withFoo({ foo: 'bar' }).should.be.true
+      withFoo({ qux: 'bar' }).should.be.false
+
+    it 'can combine with filter', ->
+      filter(withFoo).run({ foo: 'bar' }).get().should.deep.equal Just { foo: 'bar' }
+      filter(withFoo).run({ qux: 'bar' }).get().should.deep.equal Nothing()
+
