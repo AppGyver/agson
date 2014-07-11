@@ -2,6 +2,15 @@ require('chai').should()
 traversals = require '../../src/agson/traversals'
 lenses = require '../../src/agson/lenses'
 
+laws =
+  identity: (traversal) -> ({run, modify}) ->
+    it 'obeys identity law', ->
+      {identity} = traversals
+      left = traversal.then(identity).run(run)
+      right = identity.then(traversal).run(run)
+      left.get().should.deep.equal right.get()
+      left.modify(modify).should.deep.equal right.modify(modify)
+
 describe 'agson.traversals', ->
 
   describe 'identity', ->
@@ -51,11 +60,10 @@ describe 'agson.traversals', ->
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]
 
-      it 'obeys identity law', ->
-        {identity} = traversals
-        left = each.then(identity).run(['foo', 'bar'])
-        right = identity.then(each).run(['foo', 'bar'])
-        left.get().should.deep.equal right.get()
+      laws.identity(each) {
+        run: ['foo', 'bar']
+        modify: (v) -> v + 'qux'
+      }
 
   describe 'where', ->
     {where} = traversals
@@ -84,9 +92,7 @@ describe 'agson.traversals', ->
         .should.equal 'foo'
 
     describe 'composition', ->
-      it 'obeys identity law', ->
-        {identity} = traversals
-        left = strings.then(identity).run('foo')
-        right = identity.then(strings).run('foo')
-        left.get().should.deep.equal right.get()
-        left.set('bar').should.deep.equal right.set('bar')
+      laws.identity(strings) {
+        run: 'foo'
+        modify: (v) -> v + 'bar'
+      }
