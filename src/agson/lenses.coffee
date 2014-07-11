@@ -37,14 +37,14 @@ class Store
   modify: (f) ->
     @get().map(f).chain @set
 
-# { set: b -> Maybe a, get: () -> Maybe b } -> Store a b
+# { set, get, modify? } -> Store a b
 store = (s) ->
   new class extends Store
     set: s.set or notImplemented
     get: s.get or notImplemented
     modify: s.modify or Store::modify
 
-# (a -> { set: b -> Maybe a, get: () -> Maybe b }) -> Lens a b
+# (a -> { set, get, modify? }) -> Lens a b
 lens = (fs) ->
   new class extends Lens
     run: (a) -> store fs a
