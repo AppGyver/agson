@@ -10,6 +10,7 @@ class Lens
 
   # Lens b c -> Lens a c
   then: (bc) => lens (a) =>
+    
     # c -> Maybe a
     set: (c) =>
       abs = @run(a) # Store a b
