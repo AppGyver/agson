@@ -72,6 +72,14 @@ property = (key) -> lens (object) ->
   get: ->
     fromNullable object[key]
 
+maybeMap = (xs, f) ->
+  ys = []
+  for x in xs
+    maybeY = f x
+    if maybeY.isJust
+      ys.push maybeY.get()
+  ys
+
 traversal = (abl) -> lens (array) ->
   if !array?
     throw new TypeError "Input array must not be null"
@@ -79,20 +87,12 @@ traversal = (abl) -> lens (array) ->
   set: (v) -> @modify -> v
 
   modify: (f) ->
-    aList = []
-    for a in array
-      maybeA = abl.run(a).modify(f)
-      if maybeA.isJust
-        aList.push maybeA.get()
-    Just aList
+    Just maybeMap array, (a) ->
+      abl.run(a).modify(f)
 
   get: ->
-    bList = []
-    for a in array
-      maybeB = abl.run(a).get()
-      if maybeB.isJust
-        bList.push maybeB.get()
-    Just bList
+    Just maybeMap array, (a) ->
+      abl.run(a).get()
 
 module.exports = {
   nothing
