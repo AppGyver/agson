@@ -105,14 +105,18 @@ describe 'agson.lenses', ->
 
 
   describe 'definedAt', ->
-    {filter, definedAt, property} = lenses
+    {filter, definedAt, property, traversal} = lenses
     withFoo = definedAt property 'foo'
 
     it 'will succeed if getting succeeds', ->
       withFoo({ foo: 'bar' }).should.be.true
       withFoo({ qux: 'bar' }).should.be.false
 
-    it 'can combine with filter', ->
-      filter(withFoo).run({ foo: 'bar' }).get().should.deep.equal Just { foo: 'bar' }
-      filter(withFoo).run({ qux: 'bar' }).get().should.deep.equal Nothing()
+    it 'can combine with filter and traversal', ->
+      traversal(filter withFoo).run([
+        { foo: 'bar' }
+        { qux: 'bar' }
+      ]).get().should.deep.equal Just [
+        { foo: 'bar' }
+      ]
 
