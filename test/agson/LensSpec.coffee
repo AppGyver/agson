@@ -90,3 +90,15 @@ describe 'agson.lenses', ->
         { foo: 'bar' }
         { foo: 'qux' }
       ]).get().should.deep.equal Just ['bar', 'qux']
+
+  describe 'filter', ->
+    {filter, identity} = lenses
+    strings = (a) -> typeof a is 'string'
+
+    it 'can decide whether getting a provided lens will succeed', ->
+      filter(strings)(identity).run('foo').get().should.deep.equal Just 'foo'
+      filter(strings)(identity).run(123).get().should.deep.equal Nothing()
+
+    it 'can decide whether setting a provided lens will succeed', ->
+      filter(strings)(identity).run(123).set('foo').should.deep.equal Just 'foo'
+      filter(strings)(identity).run('foo').set(123).should.deep.equal Nothing()

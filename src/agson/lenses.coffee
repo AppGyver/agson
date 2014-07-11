@@ -80,6 +80,7 @@ maybeMap = (xs, f) ->
       ys.push maybeY.get()
   ys
 
+# Lens a b -> [a] -> Lens [a] [b]
 traversal = (abl) -> lens (array) ->
   if !array?
     throw new TypeError "Input array must not be null"
@@ -94,10 +95,26 @@ traversal = (abl) -> lens (array) ->
     Just maybeMap array, (a) ->
       abl.run(a).get()
 
+# (b -> boolean) -> Lens a b -> Lens a b
+filter = (predicate) -> (abl) -> lens (a) ->
+  set: (b) ->
+    if predicate b
+      abl.run(a).set(b)
+    else
+      Nothing()
+
+  get: ->
+    abl.run(a).get().chain (b) ->
+      if predicate b
+        Just b
+      else
+        Nothing()
+
 module.exports = {
   nothing
   identity
   constant
   property
   traversal
+  filter
 }
