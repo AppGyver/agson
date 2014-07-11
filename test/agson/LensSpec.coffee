@@ -36,3 +36,10 @@ describe 'agson.lenses', ->
 
       id.then(foo).run('whatever').get().should.deep.equal Just 'foo'
       id.then(foo).run('whatever').set('anything').should.deep.equal Nothing()
+
+    it 'allows access to nested objects', ->
+      [foo, bar] = [lenses.property('foo'), lenses.property('bar')]
+      foo.then(bar).run({ foo: bar: 'qux' }).get().should.deep.equal Just 'qux'
+      foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
+        foo: bar: 'baz'
+      }
