@@ -28,9 +28,9 @@ property = (key) -> lens (object) ->
 
 # (a -> boolean) -> Lens a a
 filter = (predicate) -> lens (a) ->
-  set: (a) ->
-    if predicate a
-      Just a
+  set: (b) ->
+    if predicate b
+      Just b
     else
       Nothing()
 
