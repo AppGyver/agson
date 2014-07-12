@@ -54,12 +54,6 @@ describe 'agson.traversals', ->
       ]).modify((v) -> v + 'qux').should.deep.equal ['fooqux', 'barqux']
 
     describe 'composition', ->
-      it 'flattens sublists', ->
-        each.then(each)
-          .run([['foo'], ['bar']])
-          .get()
-          .should.deep.equal ['foo', 'bar']
-
       it 'modifies sublist values', ->
         each.then(each)
           .run([['foo'], ['bar']])
