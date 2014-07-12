@@ -1,6 +1,7 @@
 {Just, Nothing} = require 'data.maybe'
 require('chai').should()
 lenses = require '../../src/agson/lenses'
+traversals = require '../../src/agson/traversals'
 
 laws =
   identity: (lens) -> ({runAll, run, set}) ->
@@ -113,4 +114,60 @@ describe 'agson.lenses', ->
     it 'will succeed if getting succeeds', ->
       withFoo({ foo: 'bar' }).should.be.true
       withFoo({ qux: 'bar' }).should.be.false
+
+  describe 'traverse', ->
+    {traverse, identity} = lenses
+    {each} = traversals
+
+    it 'accepts a traversal to recurse into a structure', ->
+      traverse(each identity)
+        .run(['foo', 'bar'])
+        .get()
+        .should.deep.equal Just ['foo', 'bar']
+
+    it 'sets each element in the traversal separately', ->
+      traverse(each identity)
+        .run(['foo', 'bar'])
+        .set('qux')
+        .should.deep.equal Just ['qux', 'qux']
+
+    describe 'composition', ->
+      {property} = lenses
+
+      it 'can handle nested structures', ->
+        property('foo')
+          .then(traverse each property 'bar')
+          .run({
+            foo: [
+              { bar: 123 }
+              { bar: 456 }
+            ]
+          })
+          .set('qux')
+          .should.deep.equal Just {
+            foo: [
+              { bar: 'qux' }
+              { bar: 'qux' }
+            ]
+          }
+
+        property('foo')
+          .then(
+            traverse each(property('bar')
+              .then(traverse each property 'qux')
+            )
+          )
+          .run({
+            foo: [
+              { bar: [ qux: 123 ] }
+              { bar: [ qux: 456 ] }
+            ]
+          })
+          .set('baz')
+          .should.deep.equal Just {
+            foo: [
+              { bar: [ qux: 'baz' ] }
+              { bar: [ qux: 'baz' ] }
+            ]
+          }
 
