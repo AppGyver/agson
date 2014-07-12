@@ -80,6 +80,12 @@ describe 'agson.traversals', ->
         .set('bar')
         .should.deep.equal ['bar', 123]
 
+    it 'filters get output', ->
+      strings
+        .run(['foo', 123])
+        .get()
+        .should.deep.equal ['foo']
+
     describe 'composition', ->
       laws.identity(strings) {
         run: ['foo', 123]

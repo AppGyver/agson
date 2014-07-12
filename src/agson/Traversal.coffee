@@ -19,10 +19,7 @@ module.exports = class Traversal
   # Traversal b c -> Traversal a c
   then: (traversal) => Traversal.of (traversable) =>
     get: =>
-      result = []
-      for b in @run(traversable).get()
-        result = result.concat traversal.run(b).get()
-      result
+      traversal.run(@run(traversable).get()).get()
 
     modify: (f) =>
       @run(traversable).modify (t) ->

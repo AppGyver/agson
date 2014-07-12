@@ -22,7 +22,7 @@ where = (predicate) -> traversal (traversable) ->
       else
         a
   get: ->
-    traversable
+    a for a in traversable when predicate a
 
 accept = (predicate) -> traversal (traversable) ->
   modify: (f) ->
