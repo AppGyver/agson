@@ -1,3 +1,5 @@
+Maybe = require 'data.maybe'
+{maybeMap} = require './util'
 
 Traversal = require './Traversal'
 traversal = Traversal.of
@@ -8,11 +10,14 @@ identity = traversal (traversable) ->
   get: ->
     traversable
 
-each = traversal (traversable) ->
+each = (lens) -> traversal (traversable) ->
   modify: (f) ->
-    f a for a in traversable
+    maybeMap traversable, (a) ->
+      lens.run(a).modify(f).orElse ->
+        Maybe.Just a
   get: ->
-    traversable
+    maybeMap traversable, (a) ->
+      lens.run(a).get()
 
 where = (predicate) -> traversal (traversable) ->
   modify: (f) ->

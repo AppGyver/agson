@@ -38,32 +38,59 @@ describe 'agson.traversals', ->
 
   describe 'each', ->
     {each} = traversals
-    it 'gets each value in the array', ->
-      each.run(['foo', 'bar']).get().should.deep.equal ['foo', 'bar']
+    {identity} = lenses
 
-    it 'sets each value in the array', ->
-      each.run([
+    it 'accepts a lens for peering into each element', ->
+      each(identity).run(['foo', 'bar']).get().should.deep.equal ['foo', 'bar']
+
+    it 'can set values through the lens', ->
+      each(identity).run([
         'foo'
         'bar'
       ]).set('qux').should.deep.equal ['qux', 'qux']
 
-    it 'modifies each value in the array by giving out the value', ->
-      each.run([
+    it 'can modify values through the lens', ->
+      each(identity).run([
         'foo'
         'bar'
       ]).modify((v) -> v + 'qux').should.deep.equal ['fooqux', 'barqux']
 
     describe 'composition', ->
       it 'modifies sublist values', ->
-        each.then(each)
+        each(identity).then(each(identity))
           .run([['foo'], ['bar']])
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]
 
-      laws.identity(each) {
+      laws.identity(each(identity)) {
         run: ['foo', 'bar']
         modify: (v) -> v + 'qux'
       }
+
+      describe 'with property lens', ->
+        {property} = lenses
+        it 'can pick properties from a list', ->
+          each(property 'foo').run([
+            { foo: 'bar' }
+            { foo: 'qux' }
+            { bar: 'whatever' }
+          ])
+          .get()
+          .should.deep.equal ['bar', 'qux']
+
+        it 'can modify properties on objects in a list', ->
+          each(property 'foo').run([
+            { foo: 'bar' }
+            { foo: 'qux' }
+            { bar: 'whatever' }
+          ])
+          .set('baz')
+          .should.deep.equal [
+            { foo: 'baz' }
+            { foo: 'baz' }
+            { bar: 'whatever' }
+          ]
+
 
   describe 'where', ->
     {where} = traversals
