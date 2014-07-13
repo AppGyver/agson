@@ -9,21 +9,23 @@ describe 'agson.traversals', ->
 
   {identity, property} = lenses
 
-  describe 'array', ->
-    {array} = traversals
+  describe 'list', ->
+    {list} = traversals
 
-    it 'runs each value in an array through a lens', ->
-      array
+    it 'is the identity for lists', ->
+      list
         .run(['foo', 'bar'])
         .get()
         .should.deep.equal Just ['foo', 'bar']
 
-      array
+    it 'sets each value in a list', ->
+      list
         .run(['foo', 'bar'])
         .set('baz')
         .should.deep.equal Just ['baz', 'baz']
 
-      array
+    it 'maps over the list', ->
+      list
         .run(['foo', 'bar'])
         .modify((v) -> v + 'qux')
         .should.deep.equal Just ['fooqux', 'barqux']
@@ -31,35 +33,35 @@ describe 'agson.traversals', ->
     describe 'composition', ->
       describe 'modify', ->
         it 'flattens Maybe List Maybe List into Maybe List List', ->
-          array
-            .then(array)
+          list
+            .then(list)
             .run([['foo', 'bar']])
             .modify((v) -> v + 'qux')
             .should.deep.equal Just [ ['fooqux', 'barqux'] ]
 
       describe 'get', ->
         it 'can flatten List List into List', ->
-          array
-            .then(array)
+          list
+            .then(list)
             .run([['foo', 'bar']])
             .get()
             .should.deep.equal Just ['foo', 'bar']
 
-        it 'works with nested arrays and objects', ->
-          array
+        it 'works with nested lists and objects', ->
+          list
             .then(property 'foo')
             .run([{ foo: 'bar'}, { foo: 'qux' }])
             .get()
             .should.deep.equal Just ['bar', 'qux']
 
           property('foo')
-            .then(array)
+            .then(list)
             .run({foo: [ 1, 2, 3 ]})
             .get()
             .should.deep.equal Just [ 1, 2, 3 ]
 
         it 'composes inside out', ->
-          array.then(property('foo').then(array))
+          list.then(property('foo').then(list))
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }
@@ -69,7 +71,7 @@ describe 'agson.traversals', ->
 
       describe 'modify', ->
         it 'composes outside in', ->
-          array.then(property('foo')).then(array)
+          list.then(property('foo')).then(list)
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }

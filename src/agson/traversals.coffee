@@ -8,15 +8,15 @@ nothing =
   modify: -> Nothing()
   get: -> Nothing()
 
-array = traversal (array) ->
-  unless array instanceof Array
+list = traversal (traversable) ->
+  unless traversable instanceof Array
     nothing
   else
     modify: (f) ->
-      Just (f a for a in array)
+      Just (f a for a in traversable)
     get: ->
-      Just array
+      Just traversable
 
 module.exports = {
-  array
+  list
 }
