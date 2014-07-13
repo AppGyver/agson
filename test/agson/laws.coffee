@@ -8,16 +8,19 @@ module.exports =
       if set?
         it 'holds for set', ->
           for data in runAll || [run]
-            left.run(data).set(set).should.deep.equal right.run(data).set(set)
+            left.run(data).set(set)
+              .should.deep.equal right.run(data).set(set)
       
       if modify?
         it 'holds for modify', ->
           for data in runAll || [run]
-            left.run(data).modify(modify).should.deep.equal right.run(data).modify(modify)
+            left.run(data).modify(modify)
+              .should.deep.equal right.run(data).modify(modify)
 
       it 'holds for get', ->
         for data in runAll || [run]
-          left.run(data).get().should.deep.equal right.run(data).get()
+          left.run(data).get()
+            .should.deep.equal right.run(data).get()
 
   # Most cases, this is what you'll want to prove
   # ab + (bc + cd) = (ab + bc) + cd
