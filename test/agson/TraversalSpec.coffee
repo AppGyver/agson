@@ -2,20 +2,9 @@ require('chai').should()
 traversals = require '../../src/agson/traversals'
 lenses = require '../../src/agson/lenses'
 
-laws =
-  identity: (traversal) -> ({run, modify}) ->
-    {identity} = traversals
-    describe 'identity law', ->
-      left = right = null
-      before ->
-        left = traversal.then(identity).run(run)
-        right = identity.then(traversal).run(run)
+laws = require './laws'
 
-      it 'holds for get', ->
-        left.get().should.deep.equal right.get()
-
-      it 'holds for set', ->
-        left.modify(modify).should.deep.equal right.modify(modify)
+traversalIdentityLaw = laws.identity traversals.identity
 
 describe 'agson.traversals', ->
 
@@ -69,7 +58,7 @@ describe 'agson.traversals', ->
           .modify((v) -> v is 'foo')
           .should.deep.equal [[true], [false]]
 
-      laws.identity(each(identity)) {
+      traversalIdentityLaw(each(identity)) {
         run: [['foo', 'bar']]
         modify: (v) -> v + 'qux'
       }
