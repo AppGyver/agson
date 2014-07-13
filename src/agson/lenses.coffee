@@ -20,15 +20,15 @@ constant = (value) -> lens ->
   get: -> Just value
 
 property = (key) -> lens (object) ->
-  if !object?
-    throw new TypeError "Input object must not be null"
-
-  set: (value) ->
-    # Warning: mutable!
-    object[key] = value
-    Just object
-  get: ->
-    fromNullable object[key]
+  unless object?
+    nothing
+  else
+    set: (value) ->
+      # Warning: mutable!
+      object[key] = value
+      Just object
+    get: ->
+      fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
 accept = (predicate) -> lens (a) ->
