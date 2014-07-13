@@ -44,15 +44,6 @@ filter = (predicate) -> lens (a) ->
 definedAt = (abl) -> (a) ->
   abl.run(a).get().isJust
 
-# (Traversal a b) -> Lens a b
-traverse = (traversal) -> lens (a) ->
-  modify: (f) ->
-    Just traversal.run(a).modify(f)
-  set: (b) ->
-    Just traversal.run(a).set(b)
-  get: ->
-    Just traversal.run(a).get()
-
 module.exports = {
   nothing
   identity
@@ -60,5 +51,4 @@ module.exports = {
   property
   filter
   definedAt
-  traverse
 }
