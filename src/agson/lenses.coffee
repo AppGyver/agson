@@ -27,7 +27,7 @@ property = (key) -> lens (object) ->
     fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
-filter = (predicate) -> lens (a) ->
+accept = (predicate) -> lens (a) ->
   set: (b) ->
     if predicate b
       Just b
@@ -49,6 +49,6 @@ module.exports = {
   identity
   constant
   property
-  filter
+  accept
   definedAt
 }

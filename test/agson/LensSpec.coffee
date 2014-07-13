@@ -105,9 +105,9 @@ describe 'agson.lenses', ->
         set: 'qux'
       }
 
-  describe 'filter', ->
-    {filter, identity} = lenses
-    strings = filter (a) -> typeof a is 'string'
+  describe 'accept', ->
+    {accept, identity} = lenses
+    strings = accept (a) -> typeof a is 'string'
 
     it 'can decide whether getting a provided lens will succeed', ->
       strings.run('foo').get().should.deep.equal Just 'foo'
