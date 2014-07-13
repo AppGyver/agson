@@ -113,10 +113,3 @@ describe 'agson.traversals', ->
         .run(['foo', 123])
         .get()
         .should.deep.equal ['foo']
-
-    describe 'composition', ->
-      laws.identity(strings) {
-        run: ['foo', 123]
-        modify: (v) -> v + 'qux'
-      }
-
