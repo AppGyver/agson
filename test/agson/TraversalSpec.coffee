@@ -70,7 +70,7 @@ describe 'agson.traversals', ->
           .should.deep.equal [[true], [false]]
 
       laws.identity(each(identity)) {
-        run: ['foo', 'bar']
+        run: [['foo', 'bar']]
         modify: (v) -> v + 'qux'
       }
 
