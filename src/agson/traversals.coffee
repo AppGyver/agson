@@ -17,6 +17,22 @@ list = traversal (traversable) ->
     get: ->
       Just traversable
 
+
+object = traversal (object) ->
+  unless typeof object is 'object'
+    nothing
+  else
+    modify: (f) ->
+      Just (
+        result = {}
+        for key, value of object
+          result[key] = f value
+        result
+      )
+    get: ->
+      Just (value for key, value of object)
+
 module.exports = {
   list
+  object
 }

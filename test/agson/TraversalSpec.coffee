@@ -82,3 +82,18 @@ describe 'agson.traversals', ->
               { foo: [ 5, 6, 7 ] }
             ]
 
+  describe 'object', ->
+    {object} = traversals
+
+    describe 'modify', ->
+      it 'composes outside in', ->
+        object.then(property('foo')).then(object)
+          .run({
+            a: { foo: { bar: 123, qux: 678 } }
+            b: { foo: { bar: 456 } }
+          })
+          .modify((v) -> 111 + v)
+          .should.deep.equal Just {
+            a: { foo: { bar: 234, qux: 789 } }
+            b: { foo: { bar: 567 } }
+          }
