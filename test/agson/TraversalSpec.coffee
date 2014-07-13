@@ -59,7 +59,7 @@ describe 'agson.traversals', ->
             .get()
             .should.deep.equal Just [ 1, 2, 3 ]
 
-        it 'can be composed ad nauseam', ->
+        it 'composes inside out', ->
           arrayValues.then(property('foo').then(arrayValues))
             .run([
               { foo: [ 1, 2, 3 ] }
@@ -67,4 +67,19 @@ describe 'agson.traversals', ->
             ])
             .get()
             .should.deep.equal Just [1, 2, 3, 4, 5, 6]
+
+      describe 'modify', ->
+        it 'composes outside in', ->
+          arrayValues
+            .then(property('foo'))
+            .then(arrayValues)
+            .run([
+              { foo: [ 1, 2, 3 ] }
+              { foo: [ 4, 5, 6 ] }
+            ])
+            .modify((v) -> v + 1)
+            .should.deep.equal Just [
+              { foo: [ 2, 3, 4 ] }
+              { foo: [ 5, 6, 7 ] }
+            ]
 
