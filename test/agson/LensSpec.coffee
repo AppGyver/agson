@@ -5,9 +5,9 @@ traversals = require '../../src/agson/traversals'
 
 laws = require './laws'
 
-lensIdentityLaw = laws.identity lenses.identity
-
 describe 'agson.lenses', ->
+  {identity} = lenses
+
   describe 'nothing', ->
     {nothing} = lenses
     it 'gets nothing', ->
@@ -20,7 +20,6 @@ describe 'agson.lenses', ->
         .should.deep.equal Nothing()
 
   describe 'identity', ->
-    {identity} = lenses
     it 'gets the same value as passed', ->
       identity.run('foo').get().should.deep.equal Just 'foo'
     it 'sets the same value as passed', ->
@@ -30,10 +29,11 @@ describe 'agson.lenses', ->
         .modify((v) -> v + 'bar')
         .should.deep.equal Just 'foobar'
 
-    lensIdentityLaw(identity) {
-      run: 'foo'
-      set: 'bar'
-    }
+    describe 'composition', ->
+      laws.identity(identity)(identity) {
+        run: 'foo'
+        set: 'bar'
+      }
 
   describe 'constant', ->
     {constant} = lenses
@@ -42,10 +42,11 @@ describe 'agson.lenses', ->
     it 'ignores set', ->
       constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
 
-    lensIdentityLaw(constant('foo')) {
-      run: 'bar'
-      set: 'bar'
-    }
+    describe 'composition', ->
+      laws.identity(identity)(constant('foo')) {
+        run: 'bar'
+        set: 'bar'
+      }
 
   describe 'property', ->
     {property} = lenses
@@ -66,7 +67,7 @@ describe 'agson.lenses', ->
           foo: bar: 'baz'
         }
 
-      lensIdentityLaw(property('foo')) {
+      laws.identity(identity)(property('foo')) {
         runAll: [
           { foo: 'bar' }
           {}
@@ -87,7 +88,7 @@ describe 'agson.lenses', ->
       strings.run('foo').set(123).should.deep.equal Nothing()
 
     describe 'composition', ->
-      lensIdentityLaw(strings) {
+      laws.identity(identity)(strings) {
         runAll: [
           'foo'
           123
