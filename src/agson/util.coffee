@@ -8,3 +8,11 @@ module.exports =
       if maybeY.isJust
         ys.push maybeY.get()
     ys
+
+  maybeFlatmap: (array, f) ->
+    result = []
+    for value in array
+      maybeA = f value
+      if maybeA.isJust
+        result = result.concat maybeA.get()
+    result

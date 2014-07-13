@@ -1,10 +1,11 @@
-{notImplemented} = require './util'
+{notImplemented, maybeFlatmap} = require './util'
 Store = require('./Store')
+Lens = require './Lens'
 
-class ListStore extends Store
+class TraversalStore extends Store
   # { get, modify, set? } -> Store a b
   @of: (s) ->
-    new class extends ListStore
+    new class extends TraversalStore
       modify: s.modify or notImplemented
       get: s.get or notImplemented
 
@@ -12,23 +13,20 @@ class ListStore extends Store
     @modify -> b
 
 # Traversable a => Traversal a b
-module.exports = class Traversal
-  # a -> Store a b
-  run: notImplemented
-
-  # Traversal b c -> Traversal a c
-  then: (traversal) => Traversal.of (traversable) =>
-    get: =>
-      result = []
-      for t in @run(traversable).get()
-        result = result.concat traversal.run(t).get()
-      result
-
-    modify: (f) =>
-      @run(traversable).modify (t) ->
-        traversal.run(t).modify f
+module.exports = class Traversal extends Lens
 
   # (a -> { get, modify, set? }) -> Traversal a b
   @of: (fs) ->
     new class extends Traversal
-      run: (traversable) -> ListStore.of fs traversable
+      run: (traversable) -> TraversalStore.of fs traversable
+
+  then: (bc) => Traversal.of (a) =>
+
+    modify: (f) =>
+      @run(a).modify (b) ->
+        bc.run(b).modify(f).getOrElse b
+
+    get: =>
+      @run(a).get().map (bs) ->
+        maybeFlatmap bs, (b) ->
+          bc.run(b).get()

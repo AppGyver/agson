@@ -1,10 +1,10 @@
 {notImplemented} = require './util'
 Store = require('./Store')
 
-class MaybeStore extends Store
+class LensStore extends Store
   # { set, get, modify? } -> Store a b
   @of: (s) ->
-    new class extends MaybeStore
+    new class extends LensStore
       set: s.set or notImplemented
       get: s.get or notImplemented
 
@@ -17,7 +17,7 @@ module.exports = class Lens
   # (a -> { set, get, modify? }) -> Lens a b
   @of: (fs) ->
     new class extends Lens
-      run: (a) -> MaybeStore.of fs a
+      run: (a) -> LensStore.of fs a
 
   # a -> Store a b
   run: notImplemented
