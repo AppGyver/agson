@@ -45,3 +45,26 @@ describe 'agson.traversals', ->
             .run([['foo', 'bar']])
             .get()
             .should.deep.equal Just ['foo', 'bar']
+
+        it 'works with nested arrays and objects', ->
+          arrayValues
+            .then(property 'foo')
+            .run([{ foo: 'bar'}, { foo: 'qux' }])
+            .get()
+            .should.deep.equal Just ['bar', 'qux']
+
+          property('foo')
+            .then(arrayValues)
+            .run({foo: [ 1, 2, 3 ]})
+            .get()
+            .should.deep.equal Just [ 1, 2, 3 ]
+
+        it 'can be composed ad nauseam', ->
+          arrayValues.then(property('foo').then(arrayValues))
+            .run([
+              { foo: [ 1, 2, 3 ] }
+              { foo: [ 4, 5, 6 ] }
+            ])
+            .get()
+            .should.deep.equal Just [1, 2, 3, 4, 5, 6]
+
