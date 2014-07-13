@@ -1,3 +1,4 @@
+merge = require 'lodash-node/modern/objects/merge'
 {Just, Nothing, fromNullable} = require 'data.maybe'
 
 Lens = require './Lens'
@@ -24,9 +25,9 @@ property = (key) -> lens (object) ->
     nothing
   else
     set: (value) ->
-      # Warning: mutable!
-      object[key] = value
-      Just object
+      modification = {}
+      modification[key] = value
+      Just merge {}, object, modification
     get: ->
       fromNullable object[key]
 

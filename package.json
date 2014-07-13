@@ -30,6 +30,7 @@
     "load-grunt-tasks": "^0.6.0"
   },
   "dependencies": {
-    "data.maybe": "^1.0.3"
+    "data.maybe": "^1.0.3",
+    "lodash-node": "^2.4.1"
   }
 }
