@@ -171,6 +171,28 @@ describe 'agson.lenses', ->
             ]
           }
 
+      describe 'with identity', ->
+        laws.associativity(
+          traverse each identity
+          traverse each identity
+          traverse each identity
+        ) {
+          run: [ [ ['foo', 'bar'], ['qux'] ] ]
+          modify: (v) -> v + 'bar'
+        }
+
+      describe 'with property and each', ->
+        laws.associativity(
+          traverse each property 'foo'
+          traverse each property 'bar'
+          traverse each property 'qux'
+        ) {
+          run: [
+            { foo: [ bar: [ { qux: 123 }, { qux: 456 } ] ] }
+          ]
+          set: 'foobar'
+        }
+
       it 'can handle deeply nested structures and filtering', ->
         {filter, definedAt} = lenses
         property('foo')
