@@ -216,29 +216,3 @@ describe 'agson.lenses', ->
               { bar: [ qux: 456 ] }
             ]
           }
-
-      it 'can do filtering and recursion with linear composition', ->
-        {filter, definedAt} = lenses
-        {where} = traversals
-        
-        quxen = property('foo')
-          .then(traverse where definedAt property 'here')
-          .then(traverse each property 'bar')
-          .run({
-            foo: [
-              { bar: [ 123 ], here: true }
-              { bar: [ 123 ], here: true }
-              { bar: [ qux: 456 ] }
-            ]
-          })
-
-        quxen.get().should.deep.equal Just [123, 123]
-        quxen.modify((v) -> 'baz')
-          .should.deep.equal Just {
-            foo: [
-              { bar: [ 'baz' ], here: true }
-              { bar: [ 'baz' ], here: true }
-              { bar: [ qux: 456 ] }
-            ]
-          }
-
