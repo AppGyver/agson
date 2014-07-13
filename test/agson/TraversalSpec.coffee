@@ -98,8 +98,8 @@ describe 'agson.traversals', ->
     it 'accepts a predicate function to determine which items to select for update', ->
       strings
         .run(['foo', 123])
-        .set('bar')
-        .should.deep.equal ['bar', 123]
+        .set(123)
+        .should.deep.equal [123, 123]
 
     it 'filters get output', ->
       strings
