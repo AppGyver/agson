@@ -8,18 +8,14 @@ nothing =
   modify: -> Nothing()
   get: -> Nothing()
 
-# Traverse array values through a lens
-array = (lens) -> traversal (array) ->
+array = traversal (array) ->
   unless array instanceof Array
     nothing
   else
     modify: (f) ->
-      Just maybeMap array, (a) ->
-        lens.run(a).modify(f).orElse ->
-          Just a
+      Just (f a for a in array)
     get: ->
-      Just maybeMap array, (a) ->
-        lens.run(a).get()
+      Just array
 
 module.exports = {
   array

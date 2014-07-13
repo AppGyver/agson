@@ -12,19 +12,18 @@ describe 'agson.traversals', ->
   describe 'array', ->
     {array} = traversals
 
-    arrayValues = array identity
     it 'runs each value in an array through a lens', ->
-      arrayValues
+      array
         .run(['foo', 'bar'])
         .get()
         .should.deep.equal Just ['foo', 'bar']
 
-      arrayValues
+      array
         .run(['foo', 'bar'])
         .set('baz')
         .should.deep.equal Just ['baz', 'baz']
 
-      arrayValues
+      array
         .run(['foo', 'bar'])
         .modify((v) -> v + 'qux')
         .should.deep.equal Just ['fooqux', 'barqux']
@@ -32,35 +31,35 @@ describe 'agson.traversals', ->
     describe 'composition', ->
       describe 'modify', ->
         it 'flattens Maybe List Maybe List into Maybe List List', ->
-          arrayValues
-            .then(arrayValues)
+          array
+            .then(array)
             .run([['foo', 'bar']])
             .modify((v) -> v + 'qux')
             .should.deep.equal Just [ ['fooqux', 'barqux'] ]
 
       describe 'get', ->
         it 'can flatten List List into List', ->
-          arrayValues
-            .then(arrayValues)
+          array
+            .then(array)
             .run([['foo', 'bar']])
             .get()
             .should.deep.equal Just ['foo', 'bar']
 
         it 'works with nested arrays and objects', ->
-          arrayValues
+          array
             .then(property 'foo')
             .run([{ foo: 'bar'}, { foo: 'qux' }])
             .get()
             .should.deep.equal Just ['bar', 'qux']
 
           property('foo')
-            .then(arrayValues)
+            .then(array)
             .run({foo: [ 1, 2, 3 ]})
             .get()
             .should.deep.equal Just [ 1, 2, 3 ]
 
         it 'composes inside out', ->
-          arrayValues.then(property('foo').then(arrayValues))
+          array.then(property('foo').then(array))
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }
@@ -70,9 +69,7 @@ describe 'agson.traversals', ->
 
       describe 'modify', ->
         it 'composes outside in', ->
-          arrayValues
-            .then(property('foo'))
-            .then(arrayValues)
+          array.then(property('foo')).then(array)
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }
