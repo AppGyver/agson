@@ -120,19 +120,3 @@ describe 'agson.traversals', ->
         modify: (v) -> v + 'qux'
       }
 
-
-  describe 'accept', ->
-    {accept} = traversals
-    strings = accept (v) -> typeof v is 'string'
-
-    it 'accepts a predicate function to determine which collections to traverse', ->
-      strings
-        .run('foo')
-        .get()
-        .should.equal 'foo'
-
-    describe 'composition', ->
-      laws.identity(strings) {
-        run: 'foo'
-        modify: (v) -> v + 'bar'
-      }
