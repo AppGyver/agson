@@ -128,7 +128,7 @@ describe 'agson.lenses', ->
 
 
   describe 'definedAt', ->
-    {filter, definedAt, property} = lenses
+    {definedAt, property} = lenses
     withFoo = definedAt property 'foo'
 
     it 'will succeed if getting succeeds', ->
