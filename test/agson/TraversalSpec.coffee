@@ -27,14 +27,21 @@ describe 'agson.traversals', ->
         .should.deep.equal ['foo', 'bar']
     
     it 'returns value that is set', ->
-      identity.run([])
-        .set(['foo'])
+      identity.run([123])
+        .set('foo')
         .should.deep.equal ['foo']
 
     it 'modifies using provided value', ->
       identity.run(['foo'])
-        .modify((list) -> list.concat ['bar'])
-        .should.deep.equal ['foo', 'bar']
+        .modify((item) -> item + 'bar')
+        .should.deep.equal ['foobar']
+
+    describe 'composition', ->
+      it 'flattens list', ->
+        identity.then(identity)
+          .run([['foo'], ['bar']])
+          .get()
+          .should.deep.equal ['foo', 'bar']
 
   describe 'each', ->
     {each} = traversals

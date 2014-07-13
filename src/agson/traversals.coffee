@@ -6,7 +6,7 @@ traversal = Traversal.of
 
 identity = traversal (traversable) ->
   modify: (f) ->
-    f traversable
+    (f a) for a in traversable
   get: ->
     traversable
 
