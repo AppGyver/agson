@@ -73,6 +73,41 @@ describe 'agson.traversals', ->
         modify: (v) -> v + 'qux'
       }
 
+      {property} = lenses
+
+      laws.associativity(
+        each property 'foo'
+        each property 'bar'
+        each property 'qux'
+      ) {
+        run: [
+          {
+            foo: [
+              {
+                bar: [
+                  {
+                    qux: 123
+                  }
+                ]
+              }
+            ]
+          }
+          {
+            foo: [
+              {
+                bar: [
+                  {
+                    qux: 456
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        set: 'foobar'
+      }
+
+    describe 'usage', ->
       describe 'with property lens', ->
         {property} = lenses
         it 'can pick properties from a list', ->
