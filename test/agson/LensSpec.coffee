@@ -34,6 +34,14 @@ describe 'agson.lenses', ->
         run: 'foo'
         set: 'bar'
       }
+      laws.associativity(
+        identity
+        identity
+        identity
+      ) {
+        run: 'foo'
+        set: 'bar'
+      }
 
   describe 'constant', ->
     {constant} = lenses
