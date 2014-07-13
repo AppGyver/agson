@@ -2,7 +2,7 @@ module.exports =
   # (ab + 0) = (0 + ab)
   identity: (identity) -> (l) -> ({runAll, run, set, modify}) ->
     describe 'identity', ->
-      left = identity.then(l))
+      left = identity.then(l)
       right = l.then(identity)
 
       if set?
@@ -21,7 +21,7 @@ module.exports =
 
   # Most cases, this is what you'll want to prove
   # ab + (bc + cd) = (ab + bc) + cd
-  associativity: (ab, bc, cd) -> ({runAll, run, set modify}) ->
+  associativity: (ab, bc, cd) -> ({runAll, run, set, modify}) ->
     describe 'associativity', ->
       left = ab.then bc.then cd
       right = (ab.then bc).then cd
