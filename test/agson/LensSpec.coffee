@@ -151,23 +151,27 @@ describe 'agson.lenses', ->
             ]
           }
 
+      it 'can handle deeply nested structures and filtering', ->
+        {filter, definedAt} = lenses
         property('foo')
           .then(
-            traverse each(property('bar')
-              .then(traverse each property 'qux')
+            traverse each(
+              filter(definedAt property 'here')
+                .then(property 'bar')
+                .then(traverse each property 'qux')
             )
           )
           .run({
             foo: [
-              { bar: [ qux: 123 ] }
+              { bar: [ qux: 123 ], here: true }
               { bar: [ qux: 456 ] }
             ]
           })
           .set('baz')
           .should.deep.equal Just {
             foo: [
-              { bar: [ qux: 'baz' ] }
-              { bar: [ qux: 'baz' ] }
+              { bar: [ qux: 'baz' ], here: true }
+              { bar: [ qux: 456 ] }
             ]
           }
 
