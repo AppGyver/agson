@@ -147,3 +147,14 @@ describe 'agson.traversals', ->
         .run(['foo', 123])
         .get()
         .should.deep.equal ['foo']
+
+    describe 'composition', ->
+      laws.associativity(
+        where (v) -> v instanceof Array
+        where (v) -> v instanceof Array
+        where (v) -> typeof v is 'string'
+      ) {
+        run: [ [ [ 'foo', 123 ], 'bar' ], 'qux' ]
+        set: 'baz'
+        modify: (v) -> v + 'baz'
+      }
