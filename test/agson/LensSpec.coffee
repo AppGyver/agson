@@ -91,6 +91,20 @@ describe 'agson.lenses', ->
         set: 'qux'
       }
 
+      laws.associativity(
+        property 'foo'
+        property 'bar'
+        property 'qux'
+      ) {
+        runAll: [
+          { foo: bar: qux: 123 }
+          { foo: bar: 123 }
+          { foo: 123 }
+          {}
+        ]
+        set: 'qux'
+      }
+
   describe 'filter', ->
     {filter, identity} = lenses
     strings = filter (a) -> typeof a is 'string'
