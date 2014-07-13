@@ -32,6 +32,16 @@ describe 'agson.traversals', ->
           .get()
           .should.deep.equal ['foo', 'bar']
 
+      laws.associativity(
+        identity
+        identity
+        identity
+      ) {
+        run: [[['foo'], ['bar']], [['qux']]]
+        set: 123
+      }
+
+
   describe 'each', ->
     {each} = traversals
     {identity} = lenses
