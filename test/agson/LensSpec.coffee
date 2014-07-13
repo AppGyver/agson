@@ -12,10 +12,21 @@ describe 'agson.lenses', ->
     {nothing} = lenses
     it 'gets nothing', ->
       nothing.run('anything').get().should.deep.equal Nothing()
-    it 'sets the same value as passed', ->
-      nothing.run('anything').set('bar').should.deep.equal Just 'bar'
+    it 'sets nothing', ->
+      nothing.run('anything').set('anything').should.deep.equal Nothing()
     it 'refuses modification', ->
       nothing.run('foo')
+        .modify(-> throw new Error 'should not get here')
+        .should.deep.equal Nothing()
+
+  describe 'empty', ->
+    {empty} = lenses
+    it 'gets nothing', ->
+      empty.run('anything').get().should.deep.equal Nothing()
+    it 'sets the same value as passed', ->
+      empty.run('anything').set('bar').should.deep.equal Just 'bar'
+    it 'refuses modification', ->
+      empty.run('foo')
         .modify(-> throw new Error 'should not get here')
         .should.deep.equal Nothing()
 

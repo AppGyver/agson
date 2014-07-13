@@ -4,6 +4,10 @@ Lens = require './Lens'
 lens = Lens.of
 
 nothing = lens ->
+  set: (b) -> Nothing()
+  get: Nothing
+
+empty = lens ->
   set: (b) -> Just b
   get: Nothing
 
@@ -46,6 +50,7 @@ definedAt = (abl) -> (a) ->
 
 module.exports = {
   nothing
+  empty
   identity
   constant
   property
