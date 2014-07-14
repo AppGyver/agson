@@ -48,6 +48,20 @@ accept = (predicate) -> lens "predicate(#{predicate.toString()})", (ma) ->
 definedAt = (abl) -> (ma) ->
   abl.run(ma).get().isJust
 
+where = (predicate) -> lens "where(#{predicate.toString()})", (ma) ->
+  modify: (f) ->
+    ma.chain (a) ->
+      if predicate a
+        f Just a
+      else
+        Nothing()
+  get: ->
+    ma.chain (a) ->
+      if predicate a
+        Just a
+      else
+        Nothing()
+
 module.exports = {
   nothing
   identity
@@ -55,4 +69,5 @@ module.exports = {
   property
   accept
   definedAt
+  where
 }

@@ -137,3 +137,18 @@ describe 'agson.lenses', ->
     it 'will succeed if getting succeeds', ->
       withFoo({ foo: 'bar' }).should.be.true
       withFoo({ qux: 'bar' }).should.be.false
+
+
+  describe 'where', ->
+    {where, definedAt, property} = lenses
+    whereHasFoo = where definedAt property 'foo'
+
+    it 'is identity if condition matches', ->
+      whereHasFoo.run(foo: 'bar').get().should.deep.equal Just foo: 'bar'
+      whereHasFoo.run(qux: 'bar').get().should.deep.equal Nothing()
+      whereHasFoo.run(foo: 'bar').set('qux').should.deep.equal Just 'qux'
+
+    it 'is nothing if condition does not match', ->
+      whereHasFoo.run('bar').get().should.deep.equal Nothing()
+      whereHasFoo.run('bar').set('qux').should.deep.equal Nothing()
+
