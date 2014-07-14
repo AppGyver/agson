@@ -152,3 +152,17 @@ describe 'agson.lenses', ->
       whereHasFoo.run('bar').get().should.deep.equal Nothing()
       whereHasFoo.run('bar').set('qux').should.deep.equal Nothing()
 
+    describe 'composition', ->
+      {list} = traversals
+      laws.associativity(
+        list
+        whereHasFoo
+        property 'bar'
+      ) {
+        run: [
+          { foo: 'anything', bar: 123 }
+          { bar: 'baz' }
+        ],
+        map: (v) -> v + 123
+      }
+
