@@ -8,45 +8,45 @@ nothing = lens "nothing", ->
   modify: Nothing
   get: Nothing
 
-identity = lens "identity", (a) ->
-  modify: (f) -> f Just a
-  get: -> Just a
+identity = lens "identity", (ma) ->
+  modify: (f) -> f ma
+  get: -> ma
 
 constant = (value) -> lens "constant(#{value})", ->
-  modify: -> Just value
-  get: -> Just value
+  modify: -> fromNullable value
+  get: -> fromNullable value
 
-property = (key) -> lens "property(#{key})", (object) ->
-  unless object?
-    nothing
-  else
-    modify: (f) ->
-      f(fromNullable(object[key]))
-        .chain (value) ->
-          modification = {}
-          modification[key] = value
-          Just merge {}, object, modification
-    get: ->
+property = (key) -> lens "property(#{key})", (mo) ->
+  modify: (f) ->
+    mo.chain (object) ->
+      mv = fromNullable(object[key])
+      f(mv).chain (value) ->
+        modification = {}
+        modification[key] = value
+        Just merge {}, object, modification
+  get: ->
+    mo.chain (object) ->
       fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
-accept = (predicate) -> lens "predicate(#{predicate.toString()})", (a) ->
+accept = (predicate) -> lens "predicate(#{predicate.toString()})", (ma) ->
   modify: (f) ->
-    f(Just a).chain (b) ->
+    f(ma).chain (b) ->
       if predicate b
         Just b
       else
         Nothing()
 
   get: ->
-    if predicate a
-      Just a
-    else
-      Nothing()
+    ma.chain (a) ->
+      if predicate a
+        Just a
+      else
+        Nothing()
 
-# Lens a b -> (a -> boolean)
-definedAt = (abl) -> (a) ->
-  abl.run(a).get().isJust
+# Lens a b -> (ma -> boolean)
+definedAt = (abl) -> (ma) ->
+  abl.run(ma).get().isJust
 
 module.exports = {
   nothing

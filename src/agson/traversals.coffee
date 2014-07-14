@@ -1,4 +1,4 @@
-{Just, Nothing} = require 'data.maybe'
+{Just, Nothing, fromNullable} = require 'data.maybe'
 {maybeMap, maybeMapValues} = require './util'
 
 Traversal = require './Traversal'
@@ -8,28 +8,33 @@ nothing =
   modify: Nothing
   get: Nothing
 
-list = traversal "list", (traversable) ->
-  unless traversable instanceof Array
-    nothing
-  else
-    modify: (f) ->
-      Just maybeMap traversable, (a) ->
-        f Just a
-    get: ->
-      Just traversable
+list = traversal "list", (mta) ->
+  modify: (f) ->
+    mta.chain (ta) ->
+      unless ta instanceof Array
+        Nothing()
+      else
+        Just maybeMap ta, (a) ->
+          f fromNullable a
+
+  get: ->
+    mta.chain (ta) ->
+      unless ta instanceof Array
+        Nothing()
+      else
+        Just ta
 
 
-object = traversal "object", (object) ->
-  unless typeof object is 'object'
-    nothing
-  else
-    modify: (f) ->
+object = traversal "object", (mo) ->
+  modify: (f) ->
+    mo.chain (object) ->
       Just (
         maybeMapValues object, (value) ->
-          f Just value
+          f fromNullable value
       )
-    get: ->
-      Just (value for key, value of object)
+  get: ->
+    mo.chain (object) ->
+      Just (value for own key, value of object)
 
 module.exports = {
   list

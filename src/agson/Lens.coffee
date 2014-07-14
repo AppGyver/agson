@@ -5,25 +5,26 @@ Store = require('./Store')
 # Lens a b
 module.exports = class Lens
 
-  # (a -> { get, modify }) -> Lens a b
+  # (Maybe a -> { get, modify }) -> Lens a b
   @of: (description, fs) ->
     new class extends Lens
-      run: (a) -> Store.of(Maybe)(fs a)
+      runM: (ma) -> Store.of(Maybe)(fs ma)
       toString: -> description
 
+  # Maybe a -> Store Maybe b
+  runM: notImplemented
+
   # a -> Store Maybe b
-  run: notImplemented
+  run: (a) -> @runM Maybe.fromNullable a
 
   # Lens b c -> Lens a c
-  then: (bc) => Lens.of "#{@toString()}.then(#{bc.toString()})", (a) =>
+  then: (bc) => Lens.of "#{@toString()}.then(#{bc.toString()})", (ma) =>
 
     # (Maybe c -> Maybe c) -> Maybe a
     modify: (f) =>
-      @run(a).modify (mb) ->
-        mb.chain (b) ->
-          bc.run(b).modify(f)
+      @runM(ma).modify (mb) ->
+        bc.runM(mb).modify(f)
 
     # () -> Maybe c
     get: =>
-      @run(a).get().chain (b) ->
-        bc.run(b).get()
+      bc.runM(@runM(ma).get()).get()
