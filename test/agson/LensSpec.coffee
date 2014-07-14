@@ -19,17 +19,6 @@ describe 'agson.lenses', ->
         .modify(-> throw new Error 'should not get here')
         .should.deep.equal Nothing()
 
-  describe 'empty', ->
-    {empty} = lenses
-    it 'gets nothing', ->
-      empty.run('anything').get().should.deep.equal Nothing()
-    it 'sets the same value as passed', ->
-      empty.run('anything').set('bar').should.deep.equal Just 'bar'
-    it 'refuses modification', ->
-      empty.run('foo')
-        .modify(-> throw new Error 'should not get here')
-        .should.deep.equal Nothing()
-
   describe 'identity', ->
     it 'gets the same value as passed', ->
       identity.run('foo').get().should.deep.equal Just 'foo'

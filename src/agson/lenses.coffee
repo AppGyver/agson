@@ -8,10 +8,6 @@ nothing = lens ->
   modify: -> Nothing()
   get: Nothing
 
-empty = lens ->
-  modify: (f) -> Just f()
-  get: Nothing
-
 identity = lens (a) ->
   modify: (f) -> Just f a
   get: -> Just a
