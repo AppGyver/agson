@@ -96,7 +96,6 @@ describe 'agson.lenses', ->
 
       it 'sets property if it is not there', ->
         property('foo').run({}).set('bar').should.deep.equal Just foo: 'bar'
-        property('foo').then(identity).run({}).set('bar').should.deep.equal Just foo: 'bar'
 
       laws.identity(identity)(property('foo')) {
         runAll: [

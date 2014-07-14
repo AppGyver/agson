@@ -1,13 +1,20 @@
 {notImplemented} = require './util'
 
-# Monad m => Store m a b
+# Monad m => Store m a
 module.exports = class Store
 
-  # b -> m a
-  set: notImplemented
+  # { get, modify } -> Store m a
+  @of: (s) ->
+    new class extends Store
+      modify: s.modify or notImplemented
+      get: s.get or notImplemented
 
-  # () -> m b
+  # () -> m a
   get: notImplemented
 
-  # (b -> b) -> m a
+  # (a -> b) -> m b
   modify: notImplemented
+
+  # b -> m b
+  set: (b) ->
+    @modify -> b

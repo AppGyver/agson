@@ -5,35 +5,37 @@ Lens = require './Lens'
 lens = Lens.of
 
 nothing = lens ->
-  set: (b) -> Nothing()
+  modify: -> Nothing()
   get: Nothing
 
 empty = lens ->
-  set: (b) -> Just b
+  modify: (f) -> Just f()
   get: Nothing
 
 identity = lens (a) ->
-  set: (b) -> Just b
+  modify: (f) -> Just f a
   get: -> Just a
 
 constant = (value) -> lens ->
-  set: -> Nothing()
+  modify: -> Just value
   get: -> Just value
 
 property = (key) -> lens (object) ->
   unless object?
     nothing
   else
-    set: (value) ->
-      modification = {}
-      modification[key] = value
-      Just merge {}, object, modification
+    modify: (f) ->
+      fromNullable(object[key]).map(f).chain (value) ->
+        modification = {}
+        modification[key] = value
+        Just merge {}, object, modification
     get: ->
       fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
 accept = (predicate) -> lens (a) ->
-  set: (b) ->
+  modify: (f) ->
+    b = f a
     if predicate b
       Just b
     else

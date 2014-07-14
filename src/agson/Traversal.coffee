@@ -1,24 +1,14 @@
 {notImplemented, maybeFlatmap} = require './util'
-Store = require('./Store')
+Store = require './Store'
 Lens = require './Lens'
-
-class TraversalStore extends Store
-  # { get, modify, set? } -> Store a b
-  @of: (s) ->
-    new class extends TraversalStore
-      modify: s.modify or notImplemented
-      get: s.get or notImplemented
-
-  set: (b) ->
-    @modify -> b
 
 # Traversable a => Traversal a b
 module.exports = class Traversal extends Lens
 
-  # (a -> { get, modify, set? }) -> Traversal a b
+  # (a -> { get, modify }) -> Traversal a b
   @of: (fs) ->
     new class extends Traversal
-      run: (traversable) -> TraversalStore.of fs traversable
+      run: (traversable) -> Store.of fs traversable
 
   then: (bc) => Traversal.of (a) =>
 
