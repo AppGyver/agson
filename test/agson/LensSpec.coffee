@@ -153,6 +153,14 @@ describe 'agson.lenses', ->
       whereHasFoo.run('bar').set('qux').should.deep.equal Nothing()
 
     describe 'composition', ->
+      laws.identity(identity)(whereHasFoo) {
+        runAll: [
+          { foo: 123 }
+          {}
+        ]
+        map: (v) -> v + 111
+      }
+
       {list} = traversals
       laws.associativity(
         list
