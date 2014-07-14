@@ -1,5 +1,5 @@
 Maybe = require 'data.maybe'
-{notImplemented, maybeFlatmap} = require './util'
+{notImplemented, maybeFlatmap, maybeMap} = require './util'
 Store = require './Store'
 Lens = require './Lens'
 
@@ -19,6 +19,7 @@ module.exports = class Traversal extends Lens
         bc.runM(mb).modify f
 
     get: =>
-      @runM(ma).get().map (bs) ->
-        maybeFlatmap bs, (b) ->
+      @runM(ma).get().map((bs) ->
+        maybeMap bs, (b) ->
           bc.run(b).get()
+      )

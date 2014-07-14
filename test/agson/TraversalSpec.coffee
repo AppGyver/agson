@@ -54,12 +54,12 @@ describe 'agson.traversals', ->
             .should.deep.equal Just [ ['fooqux', 'barqux'] ]
 
       describe 'get', ->
-        it 'can flatten List List into List', ->
+        it 'does not flatten List List into List to preserve structure', ->
           list
             .then(list)
-            .run([['foo', 'bar']])
+            .run([['foo', 'bar'], ['qux']])
             .get()
-            .should.deep.equal Just ['foo', 'bar']
+            .should.deep.equal Just [['foo', 'bar'], ['qux']]
 
         it 'works with nested lists and objects', ->
           list
