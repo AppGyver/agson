@@ -18,7 +18,7 @@ module.exports = class Lens
     # (c -> c) -> Maybe a
     modify: (f) =>
       @run(a).modify (b) ->
-        bc.run(b).modify(f).getOrElse b
+        bc.run(b).modify(f)
 
     # () -> Maybe c
     get: =>
