@@ -5,7 +5,7 @@ Lens = require './Lens'
 lens = Lens.of
 
 nothing = lens ->
-  modify: -> Nothing()
+  modify: Nothing
   get: Nothing
 
 identity = lens (a) ->
@@ -49,7 +49,6 @@ definedAt = (abl) -> (a) ->
 
 module.exports = {
   nothing
-  empty
   identity
   constant
   property

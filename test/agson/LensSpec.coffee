@@ -48,7 +48,7 @@ describe 'agson.lenses', ->
     it 'ignores value', ->
       constant('foo').run('whatever').get().should.deep.equal Just 'foo'
     it 'ignores set', ->
-      constant('foo').run('whaterver').set('bar').should.deep.equal Nothing()
+      constant('foo').run('whaterver').set('bar').should.deep.equal Just 'foo'
 
     describe 'composition', ->
       laws.identity(identity)(constant('foo')) {
@@ -83,8 +83,8 @@ describe 'agson.lenses', ->
           foo: bar: 'baz'
         }
 
-      it 'sets property if it is not there', ->
-        property('foo').run({}).set('bar').should.deep.equal Just foo: 'bar'
+      it 'does not set property if it is not there', ->
+        property('foo').run({}).set('bar').should.deep.equal Nothing()
 
       laws.identity(identity)(property('foo')) {
         runAll: [
