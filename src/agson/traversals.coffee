@@ -23,11 +23,9 @@ list = traversal "list", (mta) ->
 
 object = traversal "object", (mo) ->
   modify: (f) ->
-    mo.chain (object) ->
-      Just (
-        maybeMapValues object, (value) ->
-          f fromNullable value
-      )
+    mo.map (object) ->
+      maybeMapValues object, (value) ->
+        f fromNullable value
   get: ->
     mo.chain (object) ->
       Just (value for own key, value of object)
