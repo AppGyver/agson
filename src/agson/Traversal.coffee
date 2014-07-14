@@ -1,5 +1,5 @@
 Maybe = require 'data.maybe'
-{notImplemented, maybeFlatmap, maybeMap} = require './util'
+{maybeMap} = require './util'
 Store = require './Store'
 Lens = require './Lens'
 
