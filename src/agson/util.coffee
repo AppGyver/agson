@@ -11,7 +11,7 @@ module.exports =
 
   maybeFlatmap: (array, f) ->
     result = []
-    for value in array
+    for value, index in array
       maybeA = f value
       if maybeA.isJust
         result = result.concat maybeA.get()
