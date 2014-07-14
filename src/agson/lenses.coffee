@@ -46,21 +46,20 @@ accept = (predicate) -> lens "predicate(#{predicate.toString()})", (ma) ->
 
 # Lens a b -> (ma -> boolean)
 definedAt = (abl) -> (ma) ->
-  abl.run(ma).get().isJust
+  abl.runM(ma).get().isJust
 
-where = (predicate) -> lens "where(#{predicate.toString()})", (ma) ->
+# (ma -> boolean) -> Lens a b
+where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
   modify: (f) ->
-    ma.chain (a) ->
-      if predicate a
-        f Just a
-      else
-        Nothing()
+    unless predm(ma)
+      Nothing()
+    else
+      f ma
   get: ->
-    ma.chain (a) ->
-      if predicate a
-        Just a
-      else
-        Nothing()
+    unless predm(ma)
+      Nothing()
+    else
+      ma
 
 module.exports = {
   nothing

@@ -135,8 +135,8 @@ describe 'agson.lenses', ->
     withFoo = definedAt property 'foo'
 
     it 'will succeed if getting succeeds', ->
-      withFoo({ foo: 'bar' }).should.be.true
-      withFoo({ qux: 'bar' }).should.be.false
+      withFoo(Just { foo: 'bar' }).should.be.true
+      withFoo(Just { qux: 'bar' }).should.be.false
 
 
   describe 'where', ->
