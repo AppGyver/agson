@@ -68,10 +68,22 @@ describe 'agson.traversals', ->
             ])
             .get()
             .should.deep.equal Just [1, 2, 3, 4, 5, 6]
+        it 'composes outside in', ->
+          list
+            .then(property('foo'))
+            .then(list)
+            .run([
+              { foo: [ 1, 2, 3 ] }
+              { foo: [ 4, 5, 6 ] }
+            ])
+            .get()
+            .should.deep.equal Just [1, 2, 3, 4, 5, 6]
 
       describe 'map', ->
         it 'composes inside out', ->
-          list.then(property('foo').then(list))
+          list
+            .then(property('foo'))
+            .then(list)
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }
