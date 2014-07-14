@@ -77,6 +77,24 @@ describe 'agson.traversals', ->
   describe 'object', ->
     {object} = traversals
 
+    it 'is the identity for objects', ->
+      object
+        .run(foo: 'bar')
+        .get()
+        .should.deep.equal Just foo: 'bar'
+
+    it 'sets each property on an object', ->
+      object
+        .run(foo: 'bar', qux: 'baz')
+        .set('pow')
+        .should.deep.equal Just foo: 'pow', qux: 'pow'
+
+    it 'maps over the object values', ->
+      object
+        .run(foo: 123, bar: 456)
+        .map((v) -> v + 111)
+        .should.deep.equal Just foo: 234, bar: 567
+
     describe 'composition', ->
       laws.associativity(
         object
