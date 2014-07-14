@@ -16,7 +16,7 @@ describe 'agson.lenses', ->
       nothing.run('anything').set('anything').should.deep.equal Nothing()
     it 'refuses modification', ->
       nothing.run('foo')
-        .modify(-> throw new Error 'should not get here')
+        .map(-> throw new Error 'should not get here')
         .should.deep.equal Nothing()
 
   describe 'identity', ->
@@ -26,7 +26,7 @@ describe 'agson.lenses', ->
       identity.run('foo').set('bar').should.deep.equal Just 'bar'
     it 'modifies value with the same value as passed', ->
       identity.run('foo')
-        .modify((v) -> v + 'bar')
+        .map((v) -> v + 'bar')
         .should.deep.equal Just 'foobar'
 
     describe 'composition', ->
@@ -126,7 +126,7 @@ describe 'agson.lenses', ->
           'foo'
           123
         ]
-        modify: (v) -> v + 'bar'
+        map: (v) -> v + 'bar'
       }
 
 

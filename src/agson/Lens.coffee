@@ -15,7 +15,7 @@ module.exports = class Lens
   # Lens b c -> Lens a c
   then: (bc) => Lens.of (a) =>
 
-    # (c -> c) -> Maybe a
+    # (Maybe c -> Maybe c) -> Maybe a
     modify: (f) =>
       @run(a).modify (b) ->
         bc.run(b).modify(f)

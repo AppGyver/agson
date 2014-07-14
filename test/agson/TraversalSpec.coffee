@@ -27,16 +27,16 @@ describe 'agson.traversals', ->
     it 'maps over the list', ->
       list
         .run(['foo', 'bar'])
-        .modify((v) -> v + 'qux')
+        .map((v) -> v + 'qux')
         .should.deep.equal Just ['fooqux', 'barqux']
 
     describe 'composition', ->
-      describe 'modify', ->
+      describe 'map', ->
         it 'flattens Maybe List Maybe List into Maybe List List', ->
           list
             .then(list)
             .run([['foo', 'bar']])
-            .modify((v) -> v + 'qux')
+            .map((v) -> v + 'qux')
             .should.deep.equal Just [ ['fooqux', 'barqux'] ]
 
       describe 'get', ->
@@ -69,14 +69,14 @@ describe 'agson.traversals', ->
             .get()
             .should.deep.equal Just [1, 2, 3, 4, 5, 6]
 
-      describe 'modify', ->
-        it 'composes outside in', ->
-          list.then(property('foo')).then(list)
+      describe 'map', ->
+        it 'composes inside out', ->
+          list.then(property('foo').then(list))
             .run([
               { foo: [ 1, 2, 3 ] }
               { foo: [ 4, 5, 6 ] }
             ])
-            .modify((v) -> v + 1)
+            .map((v) -> v + 1)
             .should.deep.equal Just [
               { foo: [ 2, 3, 4 ] }
               { foo: [ 5, 6, 7 ] }
@@ -85,14 +85,14 @@ describe 'agson.traversals', ->
   describe 'object', ->
     {object} = traversals
 
-    describe 'modify', ->
-      it 'composes outside in', ->
-        object.then(property('foo')).then(object)
+    describe 'map', ->
+      it 'composes inside out', ->
+        object.then(property('foo').then(object))
           .run({
             a: { foo: { bar: 123, qux: 678 } }
             b: { foo: { bar: 456 } }
           })
-          .modify((v) -> 111 + v)
+          .map((v) -> 111 + v)
           .should.deep.equal Just {
             a: { foo: { bar: 234, qux: 789 } }
             b: { foo: { bar: 567 } }

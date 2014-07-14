@@ -1,3 +1,4 @@
+{Just} = require 'data.maybe'
 {notImplemented} = require './util'
 
 # Monad m => Store m a
@@ -12,9 +13,13 @@ module.exports = class Store
   # () -> m a
   get: notImplemented
 
-  # (a -> b) -> m b
+  # (m a -> m b) -> m b
   modify: notImplemented
 
   # b -> m b
   set: (b) ->
-    @modify -> b
+    @modify -> Just b
+
+  # (a -> b) -> m b
+  map: (f) ->
+    @modify (a) -> a.map f

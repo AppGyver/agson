@@ -9,7 +9,7 @@ nothing = lens ->
   get: Nothing
 
 identity = lens (a) ->
-  modify: (f) -> Just f a
+  modify: (f) -> f Just a
   get: -> Just a
 
 constant = (value) -> lens ->
@@ -21,21 +21,23 @@ property = (key) -> lens (object) ->
     nothing
   else
     modify: (f) ->
-      fromNullable(object[key]).map(f).chain (value) ->
-        modification = {}
-        modification[key] = value
-        Just merge {}, object, modification
+      fromNullable(object[key])
+        .chain(f)
+        .chain (value) ->
+          modification = {}
+          modification[key] = value
+          Just merge {}, object, modification
     get: ->
       fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
 accept = (predicate) -> lens (a) ->
   modify: (f) ->
-    b = f a
-    if predicate b
-      Just b
-    else
-      Nothing()
+    f(Just a).chain (b) ->
+      if predicate b
+        Just b
+      else
+        Nothing()
 
   get: ->
     if predicate a

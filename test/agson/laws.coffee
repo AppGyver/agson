@@ -1,6 +1,6 @@
 module.exports =
   # (ab + 0) = (0 + ab)
-  identity: (identity) -> (l) -> ({runAll, run, set, modify}) ->
+  identity: (identity) -> (l) -> ({runAll, run, set, map}) ->
     describe 'identity', ->
       left = identity.then(l)
       right = l.then(identity)
@@ -11,11 +11,11 @@ module.exports =
             left.run(data).set(set)
               .should.deep.equal right.run(data).set(set)
       
-      if modify?
-        it 'holds for modify', ->
+      if map?
+        it 'holds for map', ->
           for data in runAll || [run]
-            left.run(data).modify(modify)
-              .should.deep.equal right.run(data).modify(modify)
+            left.run(data).map(map)
+              .should.deep.equal right.run(data).map(map)
 
       it 'holds for get', ->
         for data in runAll || [run]

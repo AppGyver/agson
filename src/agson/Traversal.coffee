@@ -13,8 +13,9 @@ module.exports = class Traversal extends Lens
   then: (bc) => Traversal.of (a) =>
 
     modify: (f) =>
-      @run(a).modify (b) ->
-        bc.run(b).modify(f).getOrElse b
+      @run(a).modify (mb) ->
+        mb.chain (b) ->
+          bc.run(b).modify f
 
     get: =>
       @run(a).get().map (bs) ->
