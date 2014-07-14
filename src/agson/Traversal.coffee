@@ -1,3 +1,4 @@
+Maybe = require 'data.maybe'
 {notImplemented, maybeFlatmap} = require './util'
 Store = require './Store'
 Lens = require './Lens'
@@ -8,7 +9,7 @@ module.exports = class Traversal extends Lens
   # (a -> { get, modify }) -> Traversal a b
   @of: (description ,fs) ->
     new class extends Traversal
-      run: (traversable) -> Store.of fs traversable
+      run: (traversable) -> Store.of(Maybe)(fs traversable)
       toString: -> description
 
   then: (bc) => Traversal.of "#{@toString()}.then(#{bc.toString()})", (a) =>

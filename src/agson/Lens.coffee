@@ -1,3 +1,4 @@
+Maybe = require 'data.maybe'
 {notImplemented} = require './util'
 Store = require('./Store')
 
@@ -7,7 +8,7 @@ module.exports = class Lens
   # (a -> { get, modify }) -> Lens a b
   @of: (description, fs) ->
     new class extends Lens
-      run: (a) -> Store.of fs a
+      run: (a) -> Store.of(Maybe)(fs a)
       toString: -> description
 
   # a -> Store Maybe b

@@ -5,8 +5,9 @@
 module.exports = class Store
 
   # { get, modify } -> Store m a
-  @of: (s) ->
+  @of: (M) -> (s) ->
     new class extends Store
+      M: M
       modify: s.modify or notImplemented
       get: s.get or notImplemented
 
@@ -18,7 +19,7 @@ module.exports = class Store
 
   # b -> m b
   set: (b) ->
-    @modify -> Just b
+    @modify -> M.of b
 
   # (a -> b) -> m b
   map: (f) ->
