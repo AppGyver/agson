@@ -24,3 +24,6 @@ module.exports =
       if maybeV.isJust
         result[key] = maybeV.get()
     result
+
+  isArray: (input) -> (Object::toString.call input) is '[object Array]'
+  isObject: (input) -> (Object::toString.call input) is '[object Object]'
