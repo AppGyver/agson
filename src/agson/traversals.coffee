@@ -38,7 +38,7 @@ object = traversal "object", (mo) ->
       unless isObject object
         Nothing()
       else
-        Just (value for own key, value of object)
+        Just object
 
 module.exports = {
   list
