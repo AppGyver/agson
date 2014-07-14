@@ -18,11 +18,7 @@ list = traversal "list", (mta) ->
           f fromNullable a
 
   get: ->
-    mta.chain (ta) ->
-      unless ta instanceof Array
-        Nothing()
-      else
-        Just ta
+    mta
 
 
 object = traversal "object", (mo) ->
