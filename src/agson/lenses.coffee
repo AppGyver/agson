@@ -21,8 +21,7 @@ property = (key) -> lens "property(#{key})", (object) ->
     nothing
   else
     modify: (f) ->
-      fromNullable(object[key])
-        .chain(f)
+      f(fromNullable(object[key]))
         .chain (value) ->
           modification = {}
           modification[key] = value
