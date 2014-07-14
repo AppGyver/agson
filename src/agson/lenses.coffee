@@ -4,19 +4,19 @@ merge = require 'lodash-node/modern/objects/merge'
 Lens = require './Lens'
 lens = Lens.of
 
-nothing = lens ->
+nothing = lens "nothing", ->
   modify: Nothing
   get: Nothing
 
-identity = lens (a) ->
+identity = lens "identity", (a) ->
   modify: (f) -> f Just a
   get: -> Just a
 
-constant = (value) -> lens ->
+constant = (value) -> lens "constant(#{value})", ->
   modify: -> Just value
   get: -> Just value
 
-property = (key) -> lens (object) ->
+property = (key) -> lens "property(#{key})", (object) ->
   unless object?
     nothing
   else
@@ -31,7 +31,7 @@ property = (key) -> lens (object) ->
       fromNullable object[key]
 
 # (a -> boolean) -> Lens a a
-accept = (predicate) -> lens (a) ->
+accept = (predicate) -> lens "predicate(#{predicate.toString()})", (a) ->
   modify: (f) ->
     f(Just a).chain (b) ->
       if predicate b

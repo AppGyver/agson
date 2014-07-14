@@ -5,15 +5,16 @@ Store = require('./Store')
 module.exports = class Lens
 
   # (a -> { get, modify }) -> Lens a b
-  @of: (fs) ->
+  @of: (description, fs) ->
     new class extends Lens
       run: (a) -> Store.of fs a
+      toString: -> description
 
   # a -> Store Maybe b
   run: notImplemented
 
   # Lens b c -> Lens a c
-  then: (bc) => Lens.of (a) =>
+  then: (bc) => Lens.of "#{@toString()}.then(#{bc.toString()})", (a) =>
 
     # (Maybe c -> Maybe c) -> Maybe a
     modify: (f) =>
