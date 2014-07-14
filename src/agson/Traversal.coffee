@@ -6,11 +6,12 @@ Lens = require './Lens'
 module.exports = class Traversal extends Lens
 
   # (a -> { get, modify }) -> Traversal a b
-  @of: (fs) ->
+  @of: (description ,fs) ->
     new class extends Traversal
       run: (traversable) -> Store.of fs traversable
+      toString: -> description
 
-  then: (bc) => Traversal.of (a) =>
+  then: (bc) => Traversal.of "#{@toString()}.then(#{bc.toString()})", (a) =>
 
     modify: (f) =>
       @run(a).modify (mb) ->

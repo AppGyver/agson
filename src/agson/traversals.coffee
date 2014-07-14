@@ -5,10 +5,10 @@ Traversal = require './Traversal'
 traversal = Traversal.of
 
 nothing =
-  modify: Nothing()
-  get: Nothing()
+  modify: Nothing
+  get: Nothing
 
-list = traversal (traversable) ->
+list = traversal "list", (traversable) ->
   unless traversable instanceof Array
     nothing
   else
@@ -19,7 +19,7 @@ list = traversal (traversable) ->
       Just traversable
 
 
-object = traversal (object) ->
+object = traversal "object", (object) ->
   unless typeof object is 'object'
     nothing
   else
