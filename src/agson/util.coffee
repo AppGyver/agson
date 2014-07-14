@@ -19,7 +19,7 @@ module.exports =
 
   maybeMapValues: (object, f) ->
     result = {}
-    for key, value of object
+    for own key, value of object
       maybeV = f value
       if maybeV.isJust
         result[key] = maybeV.get()
