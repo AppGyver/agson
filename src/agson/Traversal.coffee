@@ -21,5 +21,4 @@ module.exports = class Traversal extends Lens
     get: =>
       @runM(ma).get().map (bs) ->
         maybeFlatmap bs, (b) ->
-          mb = Maybe.fromNullable b
-          bc.runM(mb).get().orElse -> mb
+          bc.run(b).get()
