@@ -11,3 +11,6 @@ deploy:
     tags: true
     all_branches: true
     repo: AppGyver/agson
+env:
+  global:
+    secure: EI4qbN0Wfw8zPkvjaWNuOdSaQu+m811hDXG1u/FoyOCeUkz2kbsiksnzJLIfDcCnfcwqNQDCfQ+KXGjDGPIe+AMiv8fxpdUEEBaHQ3tqJd62Ipl4A0ep3nj0kfK53fSUBkqNTNZMaZs2HMkgqq5/+BtJ1u1thN5mOATucn8YDlQ=
