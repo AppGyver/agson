@@ -14,8 +14,9 @@ class AgsonQuery
   list: liftL -> traversals.list
   object: liftL -> traversals.object
   property: liftL lenses.property
-  where: (predicate) ->
-    new AgsonQuery @lens.then combinators.where (ma) ->
+
+  where: liftL (predicate) ->
+    combinators.where (ma) ->
       ma.map(predicate).getOrElse false
 
   recurse: ->
