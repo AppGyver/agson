@@ -2,8 +2,16 @@ lenses = require './agson/lenses'
 traversals = require './agson/traversals'
 combinators = require './agson/combinators'
 
-liftL = (lensf) -> (args...) ->
-  new AgsonQuery @lens.then lensf args...
+liftThen = (lensf) -> (args...) ->
+  if @lens is lenses.identity
+    new AgsonQuery lensf args...
+  else
+    new AgsonQuery @lens.then lensf args...
+
+run = (f) -> (args...) ->
+  run: (data) =>
+    f(@lens.run(data))(args...)
+
 
 class AgsonQuery
 
@@ -11,12 +19,12 @@ class AgsonQuery
   toString: ->
     "agson(#{@lens.toString()})"
 
-  list: liftL -> traversals.list
-  object: liftL -> traversals.object
-  property: liftL lenses.property
-  index: liftL lenses.property
+  list: liftThen -> traversals.list
+  object: liftThen -> traversals.object
+  property: liftThen lenses.property
+  index: liftThen lenses.property
 
-  where: liftL (predicate) ->
+  where: liftThen (predicate) ->
     combinators.where (ma) ->
       ma.map(predicate).getOrElse false
 
@@ -24,7 +32,8 @@ class AgsonQuery
     lens = @lens.then combinators.recurse -> lens
     new AgsonQuery lens
 
-  run: (data) -> @lens.run data
+  get: run (s) -> -> s.get()
+  set: run (s) -> (v) -> s.set v
+  map: run (s) -> (f) -> s.map f
 
-module.exports = new AgsonQuery
-  then: (lens) -> lens
+module.exports = new AgsonQuery lenses.identity
