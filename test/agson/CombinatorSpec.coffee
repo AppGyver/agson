@@ -9,28 +9,6 @@ laws = require './laws'
 describe 'agson.combinators', ->
   {identity} = lenses
 
-  describe 'accept', ->
-    {accept} = combinators
-    strings = accept (a) -> typeof a is 'string'
-
-    it 'can decide whether getting a provided lens will succeed', ->
-      strings.run('foo').get().should.deep.equal Just 'foo'
-      strings.run(123).get().should.deep.equal Nothing()
-
-    it 'can decide whether setting a provided lens will succeed', ->
-      strings.run(123).set('foo').should.deep.equal Just 'foo'
-      strings.run('foo').set(123).should.deep.equal Nothing()
-
-    describe 'composition', ->
-      laws.identity(identity)(strings) {
-        runAll: [
-          'foo'
-          123
-        ]
-        map: (v) -> v + 'bar'
-      }
-
-
   describe 'definedAt', ->
     {property} = lenses
     {definedAt} = combinators

@@ -3,22 +3,6 @@
 lens = require('./Lens').of
 {identity} = require './lenses'
 
-# (a -> boolean) -> Lens a a
-accept = (predicate) -> lens "predicate(#{predicate.toString()})", (ma) ->
-  modify: (f) ->
-    f(ma).chain (b) ->
-      if predicate b
-        Just b
-      else
-        Nothing()
-
-  get: ->
-    ma.chain (a) ->
-      if predicate a
-        Just a
-      else
-        Nothing()
-
 # Lens a b -> (ma -> boolean)
 definedAt = (abl) -> (ma) ->
   abl.runM(ma).get().isJust
@@ -57,7 +41,6 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
         next
 
 module.exports = {
-  accept
   definedAt
   where
   recurse
