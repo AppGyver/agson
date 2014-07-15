@@ -73,3 +73,22 @@ describe 'agson query', ->
           { foo: 123 }
           { foo: 567, here: true }
         ]
+
+  describe 'chaining', ->
+    it 'can do partial recursion by chaining multiple queries', ->
+      agson
+        .list()
+        .then(
+          agson.property('foo').recurse()
+        )
+        .map((foo) -> foo + 1)
+        .run([
+          { foo: 1 }
+          { foo: foo: 2 }
+          { foo: foo: foo: 3 }
+        ])
+        .should.deep.equal Just [
+          { foo: 2 }
+          { foo: foo: 3 }
+          { foo: foo: foo: 4 }
+        ]

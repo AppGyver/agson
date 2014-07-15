@@ -19,6 +19,9 @@ class AgsonQuery
   toString: ->
     "agson(#{@lens.toString()})"
 
+  then: (query) ->
+    new AgsonQuery @lens.then query.lens
+
   list: liftThen -> traversals.list
   object: liftThen -> traversals.object
   property: liftThen lenses.property
