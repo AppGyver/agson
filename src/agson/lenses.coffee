@@ -1,4 +1,3 @@
-merge = require 'lodash-node/modern/objects/merge'
 {Just, Nothing, fromNullable} = require 'data.maybe'
 
 lens = require('./Lens').of
@@ -16,16 +15,23 @@ constant = (value) -> lens "constant(#{value})", ->
   get: -> fromNullable value
 
 property = (key) -> lens "property(#{key})", (mo) ->
+  setProperty = withProperty key
+
   modify: (f) ->
     mo.chain (object) ->
       mv = fromNullable(object[key])
       f(mv).chain (value) ->
-        modification = {}
-        modification[key] = value
-        Just merge {}, object, modification
+        Just setProperty(object, value)
   get: ->
     mo.chain (object) ->
       fromNullable object[key]
+
+withProperty = (key) -> (object, value) ->
+  result = {}
+  for own k, v of object
+    result[k] = v
+  result[key] = value
+  result
 
 module.exports = {
   nothing
