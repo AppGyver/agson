@@ -3,10 +3,6 @@
 lens = require('./Lens').of
 {identity} = require './lenses'
 
-# Lens a b -> (ma -> boolean)
-definedAt = (abl) -> (ma) ->
-  abl.runM(ma).get().isJust
-
 # (ma -> boolean) -> Lens a b
 where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
   modify: (f) ->
@@ -41,7 +37,6 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
         next
 
 module.exports = {
-  definedAt
   where
   recurse
 }

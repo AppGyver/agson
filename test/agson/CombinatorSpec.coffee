@@ -9,20 +9,11 @@ laws = require './laws'
 describe 'agson.combinators', ->
   {identity} = lenses
 
-  describe 'definedAt', ->
-    {property} = lenses
-    {definedAt} = combinators
-    withFoo = definedAt property 'foo'
-
-    it 'will succeed if getting succeeds', ->
-      withFoo(Just { foo: 'bar' }).should.be.true
-      withFoo(Just { qux: 'bar' }).should.be.false
-
-
   describe 'where', ->
     {property} = lenses
-    {where, definedAt} = combinators
-    whereHasFoo = where definedAt property 'foo'
+    {where} = combinators
+    whereHasFoo = where (ma) ->
+      ma.map((a) -> a.foo?).getOrElse false
 
     describe 'get', ->
       it 'is identity if condition matches', ->
