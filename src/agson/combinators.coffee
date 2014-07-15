@@ -27,7 +27,7 @@ definedAt = (abl) -> (ma) ->
 where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
   modify: (f) ->
     unless predm(ma)
-      Nothing()
+      ma
     else
       f ma
   get: ->

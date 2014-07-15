@@ -46,14 +46,16 @@ describe 'agson.combinators', ->
     {where, definedAt} = combinators
     whereHasFoo = where definedAt property 'foo'
 
-    it 'is identity if condition matches', ->
-      whereHasFoo.run(foo: 'bar').get().should.deep.equal Just foo: 'bar'
-      whereHasFoo.run(qux: 'bar').get().should.deep.equal Nothing()
-      whereHasFoo.run(foo: 'bar').set('qux').should.deep.equal Just 'qux'
+    describe 'get', ->
+      it 'is identity if condition matches', ->
+        whereHasFoo.run(foo: 'bar').get().should.deep.equal Just foo: 'bar'
+        whereHasFoo.run(qux: 'bar').get().should.deep.equal Nothing()
+        whereHasFoo.run('bar').get().should.deep.equal Nothing()
 
-    it 'is nothing if condition does not match', ->
-      whereHasFoo.run('bar').get().should.deep.equal Nothing()
-      whereHasFoo.run('bar').set('qux').should.deep.equal Nothing()
+    describe 'modify', ->
+      it 'is constant if condition does not match', ->
+        whereHasFoo.run(foo: 'bar').set('qux').should.deep.equal Just 'qux'
+        whereHasFoo.run('bar').set('qux').should.deep.equal Just 'bar'
 
     describe 'composition', ->
       laws.identity(identity)(whereHasFoo) {
