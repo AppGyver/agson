@@ -77,3 +77,20 @@ describe 'agson.combinators', ->
         map: (v) -> v + 123
       }
 
+  describe 'recurse', ->
+    {property} = lenses
+    {list} = traversals
+    {recurse} = combinators
+    it 'allows self-recursion via lazy binding', ->
+      foo = property('foo').then recurse -> foo
+      foo
+        .run(foo: foo: foo: foo: 123)
+        .map((v) -> v + 111)
+        .should.deep.equal Just foo: foo: foo: foo: 234
+
+      lists = list.then recurse -> lists
+      lists
+        .run([1, [2, [3]]])
+        .map((v) -> v + 1)
+        .should.deep.equal Just [2, [3, [4]]]
+

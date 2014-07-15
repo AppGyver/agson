@@ -1,6 +1,7 @@
 {Just, Nothing} = require 'data.maybe'
 
 lens = require('./Lens').of
+{identity} = require './lenses'
 
 # (a -> boolean) -> Lens a a
 accept = (predicate) -> lens "predicate(#{predicate.toString()})", (ma) ->
@@ -35,8 +36,29 @@ where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
     else
       ma
 
+# (() -> Lens a b) -> Lens a b
+recurse = (lensf) -> lens "recurse(...)", (ma) ->
+  end =
+    modify: (f) -> f ma
+    get: -> ma
+
+  unless ma.isJust
+    end
+  else
+    store = lensf().runM(ma)
+    next = store.get()
+
+    unless next.isJust
+      end
+    else
+      modify: (f) ->
+        store.modify f
+      get: ->
+        next
+
 module.exports = {
   accept
   definedAt
   where
+  recurse
 }
