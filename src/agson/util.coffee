@@ -9,14 +9,6 @@ module.exports =
         ys.push maybeY.get()
     ys
 
-  maybeFlatmap: (array, f) ->
-    result = []
-    for value, index in array
-      maybeA = f value
-      if maybeA.isJust
-        result = result.concat maybeA.get()
-    result
-
   maybeMapValues: (object, f) ->
     result = {}
     for own key, value of object
