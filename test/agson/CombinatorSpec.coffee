@@ -52,6 +52,7 @@ describe 'agson.combinators', ->
     {property} = lenses
     {list} = traversals
     {recurse} = combinators
+
     it 'allows self-recursion via lazy binding', ->
       foo = property('foo').then recurse -> foo
       foo
@@ -62,6 +63,39 @@ describe 'agson.combinators', ->
       lists = list.then recurse -> lists
       lists
         .run([1, [2, [3]]])
+        .map((v) -> v + 1)
+        .should.deep.equal Just [2, [3, [4]]]
+
+  describe.skip 'product', ->
+    {recurse, product} = combinators
+    {property} = lenses
+
+    describe 'recursing down a cons list', ->
+      class List
+        @Cons: do ->
+          class Cons extends List
+            constructor: (@head, @tail) ->
+          (head, tail) -> new Cons(head, tail)
+        @Nil: new class Nil extends List
+
+      list = null
+      before ->
+        list = product.list(
+          property('head')
+          property('tail').then recurse -> list
+        )
+
+      it 'yields list with structure similar to input lens list on get', ->
+        list.run(
+          List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
+        )
+        .get()
+        .should.deep.equal Just [1, [2, [3]]]
+
+      it 'preserves structure on modify', ->
+        list.run(
+          List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
+        )
         .map((v) -> v + 1)
         .should.deep.equal Just [2, [3, [4]]]
 
