@@ -131,22 +131,19 @@ describe 'agson.combinators', ->
           }
 
 
-    describe.skip 'recursing down a cons list', ->
-      class List
-        @Cons: do ->
-          class Cons extends List
-            constructor: (@head, @tail) ->
-          (head, tail) -> new Cons(head, tail)
-        @Nil: new class Nil extends List
+    describe 'recursing down a cons list', ->
+      List =
+        Cons: (head, tail) -> {head, tail}
+        Nil: {}
 
       list = null
       before ->
-        list = product.tuple(
+        list = product.tuple([
           property('head')
           property('tail').then recurse -> list
-        )
+        ])
 
-      it 'yields list with structure similar to input lens list on get', ->
+      it 'yields tuple with structure similar to input lens list on get', ->
         list.run(
           List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
         )
@@ -157,8 +154,8 @@ describe 'agson.combinators', ->
         list.run(
           List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
         )
-        .map((v) -> v + 1)
-        .should.deep.equal Just [2, [3, [4]]]
+        .map(([head, tail]) -> [head + 1, tail])
+        .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
 
   describe.skip 'sum', ->
     {recurse, sum, where} = combinators
