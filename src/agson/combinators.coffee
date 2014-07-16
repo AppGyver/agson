@@ -19,13 +19,11 @@ where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
 # (() -> Lens a b) -> Lens a b
 recurse = (lensf) -> lens "recurse(...)", (ma) ->
   abl = lensf()
+  
   modify: (f) ->
-    bstore = abl.runM(ma)
-    mb = bstore.get()
-    if mb.isNothing
-      bstore.modify f
-    else
-      abl.runM(abl.runM(mb).modify(f)).modify(f)
+    ma.chain (a) ->
+      f ma
+
   get: ->
     ma.chain (a) ->
       abl
@@ -33,7 +31,6 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
         .get()
         .map((bs) -> bs.concat [a])
         .orElse -> Just [a]
-
 
 product = do ->
   tupleAsString = (list) -> (abl.toString() for abl in list).join ','
