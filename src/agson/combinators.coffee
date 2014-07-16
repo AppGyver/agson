@@ -50,6 +50,13 @@ product = do ->
             Just t
       tuple
 
+    modify: (f) ->
+      f(@get()).chain (tuple) ->
+        result = ma
+        for abl in list
+          result = abl.runM(result).set(tuple.shift())
+        result
+
   dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
 
 module.exports = {

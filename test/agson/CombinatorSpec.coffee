@@ -83,6 +83,21 @@ describe 'agson.combinators', ->
           .get()
           .should.deep.equal Just [1, 2]
 
+      describe 'modify', ->
+        it 'modifies each piece in turn but retains the original structure in the output', ->
+          product.tuple([
+            property('foo')
+            property('bar')
+          ]).run({
+            foo: 1
+            bar: 2
+          })
+          .map(([foo, bar]) -> ['qux', 'baz'])
+          .should.deep.equal Just {
+            foo: 'qux'
+            bar: 'baz'
+          }
+
     describe.skip 'recursing down a cons list', ->
       class List
         @Cons: do ->
