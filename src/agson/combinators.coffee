@@ -54,7 +54,8 @@ product = do ->
       f(@get()).chain (tuple) ->
         result = ma
         for abl in list
-          result = abl.runM(result).set(tuple.shift())
+          mb = fromNullable(tuple.shift())
+          result = abl.runM(result).modify -> mb
         result
 
   dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
