@@ -73,10 +73,10 @@ describe 'agson.combinators', ->
     describe 'tuple', ->
       describe 'get', ->
         it 'is a list of something than can be broken down according to lenses in a list', ->
-          product.tuple(
+          product.tuple([
             property('foo')
             property('bar')
-          ).run({
+          ]).run({
             foo: 1
             bar: 2
           })
