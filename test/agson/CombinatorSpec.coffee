@@ -188,23 +188,31 @@ describe 'agson.combinators', ->
 
       list = null
       before ->
-        list = product.tuple([
-          property('head')
-          property('tail').then recurse -> list
-        ])
+        list = product.dict(
+          head: property('head')
+          tail: property('tail')
+        ).then recurse -> property('tail').then list
 
       it 'yields tuple with structure similar to input lens list on get', ->
         list.run(
-          List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
+          List.Nil
         )
         .get()
-        .should.deep.equal Just [1, [2, [3]]]
+        .should.deep.equal Nothing()
+
+        list.run(
+          List.Cons 1, List.Nil
+        )
+        .get()
+        .should.deep.equal Just [
+          List.Cons 1, List.Nil
+        ]
 
       it 'preserves structure on modify', ->
         list.run(
           List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
         )
-        .map(([head, tail]) -> [head + 1, tail])
+        .map(({head, tail}) -> List.Cons (head + 1), tail)
         .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
 
   describe.skip 'sum', ->

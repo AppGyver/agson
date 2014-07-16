@@ -45,6 +45,7 @@ describe 'agson query', ->
       agson
         .list()
         .recurse()
+        .where((v) -> typeof v is 'number')
         .map((v) -> v + 1)
         .run([
           1
@@ -81,6 +82,7 @@ describe 'agson query', ->
         .then(
           agson.property('foo').recurse()
         )
+        .where((v) -> typeof v is 'number')
         .map((foo) -> foo + 1)
         .run([
           { foo: 1 }
