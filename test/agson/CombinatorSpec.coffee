@@ -80,7 +80,7 @@ describe 'agson.combinators', ->
 
       list = null
       before ->
-        list = product.list(
+        list = product.tuple(
           property('head')
           property('tail').then recurse -> list
         )
