@@ -78,15 +78,13 @@ describe 'agson.combinators', ->
 
     describe 'get', ->
       it 'yields a list of matches to any depth', ->
-        foofoo = property('foo').then recurse -> foofoo
-        foofoo
-          .run(foo: foo: foo: foo: 123)
+        foos = property('foo').then recurse -> foos
+
+        foos
+          .run(foo: 123)
           .get()
           .should.deep.equal Just [
             123
-            foo: 123
-            foo: foo: 123
-            foo: foo: foo: 123
           ]
 
   describe 'product', ->

@@ -18,23 +18,19 @@ where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
 
 # (() -> Lens a b) -> Lens a b
 recurse = (lensf) -> lens "recurse(...)", (ma) ->
-  end =
-    modify: (f) -> f ma
-    get: -> ma
-
-  unless ma.isJust
-    end
-  else
-    store = lensf().runM(ma)
-    next = store.get()
-
-    unless next.isJust
-      end
+  abl = lensf()
+  modify: (f) ->
+    bstore = abl.runM(ma)
+    mb = bstore.get()
+    if mb.isNothing
+      bstore.modify f
     else
-      modify: (f) ->
-        store.modify f
-      get: ->
-        next
+      abl.runM(abl.runM(mb).modify(f)).modify(f)
+  get: ->
+    ma.chain (a) ->
+      bstore = abl.runM(ma)
+      bstore.get().orElse -> Just [a]
+
 
 product = do ->
   tupleAsString = (list) -> (abl.toString() for abl in list).join ','
