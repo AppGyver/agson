@@ -115,6 +115,22 @@ describe 'agson.combinators', ->
             two: 2
           }
 
+        it 'modifies each value in turn but retains the original structure in the output', ->
+          product.dict({
+            one: property 'foo'
+            two: property 'bar'
+          })
+          .run({
+            foo: 1
+            bar: 2
+          })
+          .map(({one, two}) -> { one: 'qux', two: 'baz'})
+          .should.deep.equal Just {
+            foo: 'qux'
+            bar: 'baz'
+          }
+
+
     describe.skip 'recursing down a cons list', ->
       class List
         @Cons: do ->

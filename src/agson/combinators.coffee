@@ -1,4 +1,4 @@
-{Just, Nothing} = require 'data.maybe'
+{Just, Nothing, fromNullable} = require 'data.maybe'
 
 lens = require('./Lens').of
 {identity} = require './lenses'
@@ -66,6 +66,14 @@ product = do ->
             d[key] = b
             Just d
       dict
+
+    modify: (f) ->
+      f(@get()).chain (dict) ->
+        result = ma
+        for key, abl of object
+          mb = fromNullable dict[key]
+          result = abl.runM(result).modify -> mb
+        result
 
 module.exports = {
   where
