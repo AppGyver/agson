@@ -66,11 +66,24 @@ describe 'agson.combinators', ->
         .map((v) -> v + 1)
         .should.deep.equal Just [2, [3, [4]]]
 
-  describe.skip 'product', ->
+  describe 'product', ->
     {recurse, product} = combinators
     {property} = lenses
 
-    describe 'recursing down a cons list', ->
+    describe 'tuple', ->
+      describe 'get', ->
+        it 'is a list of something than can be broken down according to lenses in a list', ->
+          product.tuple(
+            property('foo')
+            property('bar')
+          ).run({
+            foo: 1
+            bar: 2
+          })
+          .get()
+          .should.deep.equal Just [1, 2]
+
+    describe.skip 'recursing down a cons list', ->
       class List
         @Cons: do ->
           class Cons extends List

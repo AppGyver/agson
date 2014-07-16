@@ -36,7 +36,24 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
       get: ->
         next
 
+product = do ->
+  tupleAsString = (list) -> (lens.toString() for lens in list).join ','
+  dictAsString = (object) -> ("#{key}:#{lens.toString()}" for key, lens of object).join ','
+
+  tuple: (list...) -> lens "product.tuple[#{tupleAsString list}]", (ma) ->
+    get: ->
+      tuple = Just []
+      for abl in list
+        tuple = tuple.chain (t) ->
+          abl.runM(ma).get().chain (b) ->
+            t.push b
+            Just t
+      tuple
+
+  dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
+
 module.exports = {
   where
   recurse
+  product
 }
