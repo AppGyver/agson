@@ -99,3 +99,24 @@ describe 'agson.combinators', ->
         .map((v) -> v + 1)
         .should.deep.equal Just [2, [3, [4]]]
 
+  describe.skip 'sum', ->
+    {recurse, sum, where} = combinators
+    {list, object} = traversals
+
+    describe 'recursing down a sum type', ->
+      graph = null
+      before ->
+        graph = sum(list, object).then recurse -> graph
+
+      it 'yields identity on get', ->
+        graph
+          .run([1, { foo: 2 }, [ 3, { bar: 4 } ] ])
+          .get()
+          .should.deep.equal Just [1, { foo: 2 }, [ 3, { bar: 4 } ] ]
+
+      it 'preserves structure on modify', ->
+        graph
+          .run([1, { foo: 2 }, [ 3, { bar: 4 } ] ])
+          .map((v) -> v + 1)
+          .should.deep.equal Just [2, { foo: 3 }, [ 4, { bar: 5 } ] ]
+
