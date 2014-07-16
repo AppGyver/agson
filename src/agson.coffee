@@ -22,6 +22,9 @@ class AgsonQuery
   then: (query) ->
     new AgsonQuery @lens.then query.lens
 
+  selectMany: (key) ->
+    new AgsonQuery @lens.then lenses.property(key).then traversals.list
+
   list: liftThen -> traversals.list
   object: liftThen -> traversals.object
   property: liftThen lenses.property

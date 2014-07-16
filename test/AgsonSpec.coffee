@@ -92,3 +92,13 @@ describe 'agson query', ->
           { foo: foo: 3 }
           { foo: foo: foo: 4 }
         ]
+
+  describe 'selectMany', ->
+    it 'is an alias for property().list()', ->
+      agson
+        .selectMany('foos')
+        .map((v) -> v + 1)
+        .run({
+          foos: [1, 2, 3]
+        })
+        .should.deep.equal Just foos: [2, 3, 4]
