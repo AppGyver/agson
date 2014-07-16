@@ -194,19 +194,31 @@ describe 'agson.combinators', ->
         ).then recurse -> property('tail').then list
 
       it 'yields tuple with structure similar to input lens list on get', ->
-        list.run(
-          List.Nil
-        )
-        .get()
-        .should.deep.equal Nothing()
+        list
+          .run(
+            List.Nil
+          )
+          .get()
+          .should.deep.equal Nothing()
 
-        list.run(
-          List.Cons 1, List.Nil
-        )
-        .get()
-        .should.deep.equal Just [
-          List.Cons 1, List.Nil
-        ]
+        list
+          .run(
+            List.Cons 1, List.Nil
+          )
+          .get()
+          .should.deep.equal Just [
+            List.Cons 1, List.Nil
+          ]
+
+        list
+          .run(
+            List.Cons 1, List.Cons 2, List.Nil
+          )
+          .get()
+          .should.deep.equal Just [
+            List.Cons 2, List.Nil
+            List.Cons 1, List.Cons 2, List.Nil
+          ]
 
       it 'preserves structure on modify', ->
         list.run(
