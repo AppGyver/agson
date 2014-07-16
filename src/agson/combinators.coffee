@@ -54,8 +54,9 @@ product = do ->
       f(@get()).chain (tuple) ->
         result = ma
         for abl in list
-          mb = fromNullable(tuple.shift())
-          result = abl.runM(result).modify -> mb
+          result = result.chain ->
+            mb = fromNullable(tuple.shift())
+            abl.runM(result).modify -> mb
         result
 
   dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
@@ -72,8 +73,9 @@ product = do ->
       f(@get()).chain (dict) ->
         result = ma
         for key, abl of object
-          mb = fromNullable dict[key]
-          result = abl.runM(result).modify -> mb
+          result = result.chain ->
+            mb = fromNullable dict[key]
+            abl.runM(result).modify -> mb
         result
 
 module.exports = {
