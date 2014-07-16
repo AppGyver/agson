@@ -58,6 +58,14 @@ product = do ->
         result
 
   dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
+    get: ->
+      dict = Just {}
+      for key, abl of object
+        dict = dict.chain (d) ->
+          abl.runM(ma).get().chain (b) ->
+            d[key] = b
+            Just d
+      dict
 
 module.exports = {
   where

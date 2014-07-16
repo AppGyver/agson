@@ -98,6 +98,23 @@ describe 'agson.combinators', ->
             bar: 'baz'
           }
 
+    describe 'dict', ->
+      describe 'get', ->
+        it 'is an object of something that can be broken down according to lenses in values', ->
+          product.dict({
+            one: property 'foo'
+            two: property 'bar'
+          })
+          .run({
+            foo: 1
+            bar: 2
+          })
+          .get()
+          .should.deep.equal Just {
+            one: 1
+            two: 2
+          }
+
     describe.skip 'recursing down a cons list', ->
       class List
         @Cons: do ->
