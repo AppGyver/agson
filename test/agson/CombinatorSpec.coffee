@@ -53,18 +53,41 @@ describe 'agson.combinators', ->
     {list} = traversals
     {recurse} = combinators
 
-    it 'allows self-recursion via lazy binding', ->
-      foo = property('foo').then recurse -> foo
-      foo
-        .run(foo: foo: foo: foo: 123)
-        .map((v) -> v + 111)
-        .should.deep.equal Just foo: foo: foo: foo: 234
+    describe 'modify', ->
+      it 'allows access to each matching level', ->
+        foo = property('foo').then recurse -> foo
+        foo
+          .run(foo: foo: foo: foo: {})
+          .map((v) -> v.bar = true)
+          .should.deep.equal Just {
+            foo:
+              foo:
+                foo:
+                  foo:
+                    bar: true
+                  bar: true
+                bar: true
+              bar: true
+          }
 
-      lists = list.then recurse -> lists
-      lists
-        .run([1, [2, [3]]])
-        .map((v) -> v + 1)
-        .should.deep.equal Just [2, [3, [4]]]
+        lists = list.then recurse -> lists
+        lists
+          .run([[[]]])
+          .map((v) -> v.concat [1])
+          .should.deep.equal Just [[[1], 1], 1]
+
+    describe 'get', ->
+      it 'yields a list of matches to any depth', ->
+        foofoo = property('foo').then recurse -> foofoo
+        foofoo
+          .run(foo: foo: foo: foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+            foo: 123
+            foo: foo: 123
+            foo: foo: foo: 123
+          ]
 
   describe 'product', ->
     {recurse, product} = combinators
