@@ -56,6 +56,7 @@ describe 'agson.combinators', ->
     describe 'modify', ->
       it 'allows access to each matching level', ->
         foos = property('foo').then recurse -> foos
+        
         foos
           .run(foo: {})
           .map((v) -> v.bar = true ; v)
@@ -63,6 +64,28 @@ describe 'agson.combinators', ->
             foo:
               bar:
                 true
+          }
+
+        foos
+          .run(foo: foo: {})
+          .map((v) -> v.bar = true ; v)
+          .should.deep.equal Just {
+            foo:
+              foo:
+                bar: true
+              bar: true
+          }
+
+        foos
+          .run(foo: foo: foo: {})
+          .map((v) -> v.bar = true ; v)
+          .should.deep.equal Just {
+            foo:
+              foo:
+                foo:
+                  bar: true
+                bar: true
+              bar: true
           }
 
     describe 'get', ->

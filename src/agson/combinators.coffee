@@ -22,7 +22,12 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
   
   modify: (f) ->
     ma.chain (a) ->
-      f ma
+      storeb = abl.runM(ma)
+      mb = storeb.get()
+      if mb.isNothing
+        f ma
+      else
+        f storeb.modify f
 
   get: ->
     ma.chain (a) ->
