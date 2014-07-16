@@ -37,8 +37,8 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
         next
 
 product = do ->
-  tupleAsString = (list) -> (lens.toString() for lens in list).join ','
-  dictAsString = (object) -> ("#{key}:#{lens.toString()}" for key, lens of object).join ','
+  tupleAsString = (list) -> (abl.toString() for abl in list).join ','
+  dictAsString = (object) -> ("#{key}:#{abl.toString()}" for key, abl of object).join ','
 
   tuple: (list) -> lens "product.tuple[#{tupleAsString list}]", (ma) ->
     get: ->
