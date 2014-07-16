@@ -87,6 +87,23 @@ describe 'agson.combinators', ->
             123
           ]
 
+        foos
+          .run(foo: foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+            foo: 123
+          ]
+
+        foos
+          .run(foo: foo: foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+            { foo: 123 }
+            { foo: foo: 123 }
+          ]
+
   describe 'product', ->
     {recurse, product} = combinators
     {property} = lenses

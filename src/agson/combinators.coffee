@@ -28,8 +28,11 @@ recurse = (lensf) -> lens "recurse(...)", (ma) ->
       abl.runM(abl.runM(mb).modify(f)).modify(f)
   get: ->
     ma.chain (a) ->
-      bstore = abl.runM(ma)
-      bstore.get().orElse -> Just [a]
+      abl
+        .runM(ma)
+        .get()
+        .map((bs) -> bs.concat [a])
+        .orElse -> Just [a]
 
 
 product = do ->
