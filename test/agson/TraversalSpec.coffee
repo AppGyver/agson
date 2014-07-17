@@ -176,51 +176,69 @@ describe 'agson.traversals', ->
             { foo: foo: 123 }
           ]
 
-    describe 'recursing down a cons list', ->
+    describe 'parsing recursive datastructures', ->
       {recurse} = traversals
-      {product} = combinators
+      describe 'cons list', ->
+        {product} = combinators
 
-      List =
-        Cons: (head, tail) -> {head, tail}
-        Nil: {}
+        List =
+          Cons: (head, tail) -> {head, tail}
+          Nil: {}
 
-      list = null
-      before ->
-        list = product.dict(
-          head: property('head')
-          tail: property('tail')
-        ).then recurse -> property('tail').then list
+        list = null
+        before ->
+          list = product.dict(
+            head: property('head')
+            tail: property('tail')
+          ).then recurse -> property('tail').then list
 
-      it 'yields tuple with structure similar to input lens list on get', ->
-        list
-          .run(
-            List.Nil
+        it 'yields tuple with structure similar to input lens list on get', ->
+          list
+            .run(
+              List.Nil
+            )
+            .get()
+            .should.deep.equal Nothing()
+
+          list
+            .run(
+              List.Cons 1, List.Nil
+            )
+            .get()
+            .should.deep.equal Just [
+              List.Cons 1, List.Nil
+            ]
+
+          list
+            .run(
+              List.Cons 1, List.Cons 2, List.Nil
+            )
+            .get()
+            .should.deep.equal Just [
+              List.Cons 2, List.Nil
+              List.Cons 1, List.Cons 2, List.Nil
+            ]
+
+        it 'preserves structure on modify', ->
+          list.run(
+            List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
           )
-          .get()
-          .should.deep.equal Nothing()
+          .map(({head, tail}) -> List.Cons (head + 1), tail)
+          .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
 
-        list
-          .run(
-            List.Cons 1, List.Nil
-          )
-          .get()
-          .should.deep.equal Just [
-            List.Cons 1, List.Nil
-          ]
+      describe.skip 'tree', ->
+        Tree =
+          Leaf: (value) -> { value }
+          Tree: (left, value, right) -> { left, value, right }
 
-        list
-          .run(
-            List.Cons 1, List.Cons 2, List.Nil
-          )
-          .get()
-          .should.deep.equal Just [
-            List.Cons 2, List.Nil
-            List.Cons 1, List.Cons 2, List.Nil
-          ]
-
-      it 'preserves structure on modify', ->
-        list.run(
-          List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
-        )
-        .map(({head, tail}) -> List.Cons (head + 1), tail)
-        .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
+        tree = null
+        before ->
+          tree = product.dict(
+            left: property 'left'
+            value: property 'value'
+            right: property 'right'
+          ).then(sum.some([
+            recurse -> property('left').then tree
+            property 'value'
+            recurse -> property('right').then tree
+          ]))
