@@ -35,7 +35,7 @@ class AgsonQuery
       ma.map(predicate).getOrElse false
 
   recurse: ->
-    lens = @lens.then combinators.recurse -> lens
+    lens = @lens.then traversals.recurse -> lens
     new AgsonQuery lens
 
   get: run (s) -> -> s.get()

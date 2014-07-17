@@ -16,27 +16,6 @@ where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
     else
       ma
 
-# (() -> Lens a b) -> Lens a b
-recurse = (lensf) -> lens "recurse(...)", (ma) ->
-  abl = lensf()
-  
-  modify: (f) ->
-    ma.chain (a) ->
-      storeb = abl.runM(ma)
-      mb = storeb.get()
-      if mb.isNothing
-        f ma
-      else
-        f storeb.modify f
-
-  get: ->
-    ma.chain (a) ->
-      abl
-        .runM(ma)
-        .get()
-        .map((bs) -> bs.concat [a])
-        .orElse -> Just [a]
-
 product = do ->
   tupleAsString = (list) -> (abl.toString() for abl in list).join ','
   dictAsString = (object) -> ("#{key}:#{abl.toString()}" for key, abl of object).join ','
@@ -81,6 +60,5 @@ product = do ->
 
 module.exports = {
   where
-  recurse
   product
 }

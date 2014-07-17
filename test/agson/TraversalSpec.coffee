@@ -107,3 +107,70 @@ describe 'agson.traversals', ->
         }
         map: (v) -> 111 + v
       }
+
+  describe 'recurse', ->
+    {property} = lenses
+    {list, recurse} = traversals
+
+    describe 'modify', ->
+      it 'allows access to each matching level', ->
+        foos = property('foo').then recurse -> foos
+        
+        foos
+          .run(foo: {})
+          .map((v) -> v.bar = true ; v)
+          .should.deep.equal Just {
+            foo:
+              bar:
+                true
+          }
+
+        foos
+          .run(foo: foo: {})
+          .map((v) -> v.bar = true ; v)
+          .should.deep.equal Just {
+            foo:
+              foo:
+                bar: true
+              bar: true
+          }
+
+        foos
+          .run(foo: foo: foo: {})
+          .map((v) -> v.bar = true ; v)
+          .should.deep.equal Just {
+            foo:
+              foo:
+                foo:
+                  bar: true
+                bar: true
+              bar: true
+          }
+
+    describe 'get', ->
+      it 'yields a list of matches to any depth', ->
+        foos = property('foo').then recurse -> foos
+
+        foos
+          .run(foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+          ]
+
+        foos
+          .run(foo: foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+            foo: 123
+          ]
+
+        foos
+          .run(foo: foo: foo: 123)
+          .get()
+          .should.deep.equal Just [
+            123
+            { foo: 123 }
+            { foo: foo: 123 }
+          ]

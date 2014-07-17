@@ -48,76 +48,8 @@ describe 'agson.combinators', ->
         map: (v) -> v + 123
       }
 
-  describe 'recurse', ->
-    {property} = lenses
-    {list} = traversals
-    {recurse} = combinators
-
-    describe 'modify', ->
-      it 'allows access to each matching level', ->
-        foos = property('foo').then recurse -> foos
-        
-        foos
-          .run(foo: {})
-          .map((v) -> v.bar = true ; v)
-          .should.deep.equal Just {
-            foo:
-              bar:
-                true
-          }
-
-        foos
-          .run(foo: foo: {})
-          .map((v) -> v.bar = true ; v)
-          .should.deep.equal Just {
-            foo:
-              foo:
-                bar: true
-              bar: true
-          }
-
-        foos
-          .run(foo: foo: foo: {})
-          .map((v) -> v.bar = true ; v)
-          .should.deep.equal Just {
-            foo:
-              foo:
-                foo:
-                  bar: true
-                bar: true
-              bar: true
-          }
-
-    describe 'get', ->
-      it 'yields a list of matches to any depth', ->
-        foos = property('foo').then recurse -> foos
-
-        foos
-          .run(foo: 123)
-          .get()
-          .should.deep.equal Just [
-            123
-          ]
-
-        foos
-          .run(foo: foo: 123)
-          .get()
-          .should.deep.equal Just [
-            123
-            foo: 123
-          ]
-
-        foos
-          .run(foo: foo: foo: 123)
-          .get()
-          .should.deep.equal Just [
-            123
-            { foo: 123 }
-            { foo: foo: 123 }
-          ]
-
   describe 'product', ->
-    {recurse, product} = combinators
+    {product} = combinators
     {property} = lenses
 
     describe 'tuple', ->
@@ -182,6 +114,8 @@ describe 'agson.combinators', ->
 
 
     describe 'recursing down a cons list', ->
+      {recurse} = traversals
+      
       List =
         Cons: (head, tail) -> {head, tail}
         Nil: {}
@@ -228,8 +162,8 @@ describe 'agson.combinators', ->
         .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
 
   describe.skip 'sum', ->
-    {recurse, sum, where} = combinators
-    {list, object} = traversals
+    {sum, where} = combinators
+    {list, object, recurse} = traversals
 
     describe 'recursing down a sum type', ->
       graph = null

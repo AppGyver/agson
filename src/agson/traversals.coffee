@@ -40,7 +40,29 @@ object = traversal "object", (mo) ->
       else
         Just object
 
+# (() -> Lens a b) -> Lens a b
+recurse = (lensf) -> traversal "recurse(...)", (ma) ->
+  abl = lensf()
+  
+  modify: (f) ->
+    ma.chain (a) ->
+      storeb = abl.runM(ma)
+      mb = storeb.get()
+      if mb.isNothing
+        f ma
+      else
+        f storeb.modify f
+
+  get: ->
+    ma.chain (a) ->
+      abl
+        .runM(ma)
+        .get()
+        .map((bs) -> bs.concat [a])
+        .orElse -> Just [a]
+
 module.exports = {
   list
   object
+  recurse
 }
