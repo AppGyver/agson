@@ -1,5 +1,8 @@
 {Just, Nothing} = require 'data.maybe'
+Validation = require 'data.validation'
+
 require('chai').should()
+
 lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
 combinators = require '../../src/agson/combinators'
@@ -115,7 +118,7 @@ describe 'agson.combinators', ->
 
     describe 'recursing down a cons list', ->
       {recurse} = traversals
-      
+
       List =
         Cons: (head, tail) -> {head, tail}
         Nil: {}
@@ -182,3 +185,28 @@ describe 'agson.combinators', ->
           .map((v) -> v + 1)
           .should.deep.equal Just [2, { foo: 3 }, [ 4, { bar: 5 } ] ]
 
+  describe 'fromValidator', ->
+    {fromValidator} = combinators
+    {list} = traversals
+
+    numberValidator = (input) ->
+      if typeof input is 'number'
+        Validation.Success input
+      else
+        Validation.Failure ['not a number']
+
+    numberList = list.then(fromValidator numberValidator)
+
+    describe 'get', ->
+      it 'gets items through validator', ->
+        numberList
+          .run([1, 2, 3, 'foo'])
+          .get()
+          .should.deep.equal Just [ 1, 2, 3 ]
+
+    describe 'modify', ->
+      it 'modifies items through validator', ->
+        numberList
+          .run([1, 2, 3, 'foo'])
+          .map((v) -> v + 1)
+          .should.deep.equal Just [2, 3, 4, 'foo']

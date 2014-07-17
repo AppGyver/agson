@@ -1,4 +1,4 @@
-{Just, Nothing, fromNullable} = require 'data.maybe'
+{Just, Nothing, fromNullable, fromValidation} = require 'data.maybe'
 
 lens = require('./Lens').of
 {identity} = require './lenses'
@@ -58,7 +58,21 @@ product = do ->
             abl.runM(result).modify -> mb
         result
 
+fromValidator = (validator) -> lens "validate", (ma) ->
+  get: ->
+    ma.chain (a) ->
+      fromValidation validator a
+
+  modify: (f) ->
+    ma.chain (a) ->
+      validb = fromValidation(validator a)
+      if validb.isJust
+        f validb
+      else
+        ma
+
 module.exports = {
   where
   product
+  fromValidator
 }
