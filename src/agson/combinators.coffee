@@ -72,13 +72,13 @@ fromValidator = (validator) -> lens "validate", (ma) ->
       else
         ma
 
-union = do ->
+sum = do ->
   withTag = (tag, value) ->
     tagged = {}
     tagged[tag] = value
     Just tagged
 
-  tagged: (tagsToLenses) -> lens "union.tagged(#{lensMapAsString tagsToLenses})", (ma) ->
+  tagged: (tagsToLenses) -> lens "sum.tagged(#{lensMapAsString tagsToLenses})", (ma) ->
     get: ->
       result = Nothing()
 
@@ -87,7 +87,7 @@ union = do ->
         if mb.isJust
           result = withTag tag, mb.get()
           break
-      
+
       result
 
     modify: (f) ->
@@ -105,5 +105,5 @@ module.exports = {
   where
   product
   fromValidator
-  union
+  sum
 }
