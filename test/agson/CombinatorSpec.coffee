@@ -196,4 +196,12 @@ describe 'agson.combinators', ->
             .get()
             .should.deep.equal Just leaf: Leaf.of 123
 
-          
+      describe 'modify', ->
+        it 'can modify a tagged type at the root', ->
+          tree
+            .run(Leaf.of 123)
+            .map(({tree, leaf}) ->
+              switch
+                when leaf then Leaf.of leaf.value + 111
+            )
+            .should.deep.equal Just Leaf.of 234

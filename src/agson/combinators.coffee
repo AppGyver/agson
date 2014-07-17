@@ -72,17 +72,33 @@ fromValidator = (validator) -> lens "validate", (ma) ->
       else
         ma
 
-union =
+union = do ->
+  withTag = (tag, value) ->
+    tagged = {}
+    tagged[tag] = value
+    Just tagged
+
   tagged: (tagsToLenses) -> lens "union.tagged(#{lensMapAsString tagsToLenses})", (ma) ->
     get: ->
       result = Nothing()
+
       for tag, abl of tagsToLenses
         mb = abl.runM(ma).get()
         if mb.isJust
-          tagged = {}
-          tagged[tag] = mb.get()
-          result = Just tagged
+          result = withTag tag, mb.get()
           break
+      
+      result
+
+    modify: (f) ->
+      result = Nothing()
+
+      for tag, abl of tagsToLenses
+        tagged = abl.runM(ma).get()
+        if tagged.isJust
+          result = f withTag tag, tagged.get()
+          break
+
       result
 
 module.exports = {
