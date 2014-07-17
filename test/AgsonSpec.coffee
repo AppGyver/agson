@@ -1,5 +1,6 @@
 {Just, Nothing} = require 'data.maybe'
 Validation = require 'data.validation'
+types = require 'ag-types'
 
 require('chai').should()
 
@@ -127,3 +128,23 @@ describe 'agson query', ->
         .run(123)
         .should.deep.equal Nothing()
 
+  describe 'choose', ->
+
+    it 'composes a tagged union given choices', ->
+      fooType = do ({Object, Any} = types) ->
+        Object
+          foo: Any
+      barType = do ({Object, Any} = types) ->
+        Object
+          bar: Any
+      agson
+        .choose(
+          hasFoo: agson.validateAs fooType
+          hasBar: agson.validateAs barType
+        )
+        .map(({hasFoo, hasBar}) ->
+          switch
+            when hasBar then { bar: hasBar.bar + 111 }
+        )
+        .run(bar: 123)
+        .should.deep.equal Just bar: 234

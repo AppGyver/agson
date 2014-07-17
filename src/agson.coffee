@@ -41,6 +41,13 @@ class AgsonQuery
   validateAs: (type) ->
     new AgsonQuery @lens.then combinators.fromValidator type
 
+  choose: (options) ->
+    tagsToLenses = {}
+    for tag, query of options
+      tagsToLenses[tag] = query.lens
+
+    new AgsonQuery @lens.then combinators.sum.tagged tagsToLenses
+
   get: run (s) -> -> s.get()
   set: run (s) -> (v) -> s.set v
   map: run (s) -> (f) -> s.map f
