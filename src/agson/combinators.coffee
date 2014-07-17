@@ -16,11 +16,12 @@ where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
     else
       ma
 
-product = do ->
-  tupleAsString = (list) -> (abl.toString() for abl in list).join ','
-  dictAsString = (object) -> ("#{key}:#{abl.toString()}" for key, abl of object).join ','
+lensListAsString = (list) -> (abl.toString() for abl in list).join ','
+lensMapAsString = (object) -> ("#{key}:#{abl.toString()}" for key, abl of object).join ','
 
-  tuple: (list) -> lens "product.tuple[#{tupleAsString list}]", (ma) ->
+product = do ->
+
+  tuple: (list) -> lens "product.tuple[#{lensListAsString list}]", (ma) ->
     get: ->
       tuple = Just []
       for abl in list
@@ -39,7 +40,7 @@ product = do ->
             abl.runM(result).modify -> mb
         result
 
-  dict: (object) -> lens "product.dict{#{dictAsString object}}", (ma) ->
+  dict: (object) -> lens "product.dict{#{lensMapAsString object}}", (ma) ->
     get: ->
       dict = Just {}
       for key, abl of object
@@ -71,8 +72,20 @@ fromValidator = (validator) -> lens "validate", (ma) ->
       else
         ma
 
+union =
+  tagged: (tagsToLenses) -> lens "union.tagged(#{lensMapAsString tagsToLenses})", (ma) ->
+    get: ->
+      result = Nothing()
+      for tag, abl of tagsToLenses
+        mb = abl.runM(ma).get()
+        if mb.isJust
+          result = mb
+          break
+      result
+
 module.exports = {
   where
   product
   fromValidator
+  union
 }

@@ -1,5 +1,6 @@
 {Just, Nothing} = require 'data.maybe'
 Validation = require 'data.validation'
+types = require 'ag-types'
 
 require('chai').should()
 
@@ -161,3 +162,39 @@ describe 'agson.combinators', ->
           .run([1, 2, 3, 'foo'])
           .map((v) -> v + 1)
           .should.deep.equal Just [2, 3, 4, 'foo']
+
+  describe 'union', ->
+    {union, fromValidator} = combinators
+
+    Tree =
+      Leaf: (value) -> { value }
+      Tree: (left, right) -> { left, right }
+
+    LeafType = do ({Object, Any} = types) ->
+      Object
+        value: Any
+
+    TreeType = do ({OneOf, Object, Optional, recursive} = types) ->
+      OneOf([
+        LeafType
+        Object
+          left: Optional recursive -> TreeType
+          right: Optional recursive -> TreeType
+      ])
+
+    describe 'tagged', ->
+      describe 'get', ->
+        tree = null
+        before ->
+          tree = union.tagged(
+            tree: fromValidator TreeType
+            leaf: fromValidator LeafType
+          )
+
+        it 'can read one of the tagged types from root', ->
+          tree
+            .run(Tree.Leaf 123)
+            .get()
+            .should.deep.equal Just Tree.Leaf 123
+
+          

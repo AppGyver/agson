@@ -225,20 +225,3 @@ describe 'agson.traversals', ->
           )
           .map(({head, tail}) -> List.Cons (head + 1), tail)
           .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
-
-      describe.skip 'tree', ->
-        Tree =
-          Leaf: (value) -> { value }
-          Tree: (left, value, right) -> { left, value, right }
-
-        tree = null
-        before ->
-          tree = product.dict(
-            left: property 'left'
-            value: property 'value'
-            right: property 'right'
-          ).then(sum.some([
-            recurse -> property('left').then tree
-            property 'value'
-            recurse -> property('right').then tree
-          ]))
