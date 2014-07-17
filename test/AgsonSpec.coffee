@@ -1,4 +1,6 @@
-{Just} = require 'data.maybe'
+{Just, Nothing} = require 'data.maybe'
+Validation = require 'data.validation'
+
 require('chai').should()
 
 agson = require('../src/agson')
@@ -104,3 +106,24 @@ describe 'agson query', ->
           foos: [1, 2, 3]
         })
         .should.deep.equal Just foos: [2, 3, 4]
+
+  describe 'validateAs', ->
+    string = (input) ->
+      if typeof input is 'string'
+        Validation.Success input
+      else
+        Validation.Failure ['not a string']
+
+    it 'composes a fromValidator given a type', ->
+      agson
+        .validateAs(string)
+        .get()
+        .run('string')
+        .should.deep.equal Just 'string'
+
+      agson
+        .validateAs(string)
+        .get()
+        .run(123)
+        .should.deep.equal Nothing()
+

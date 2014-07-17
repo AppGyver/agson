@@ -38,6 +38,9 @@ class AgsonQuery
     lens = @lens.then traversals.recurse -> lens
     new AgsonQuery lens
 
+  validateAs: (type) ->
+    new AgsonQuery @lens.then combinators.fromValidator type
+
   get: run (s) -> -> s.get()
   set: run (s) -> (v) -> s.set v
   map: run (s) -> (f) -> s.map f
