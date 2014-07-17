@@ -1,6 +1,6 @@
 {
   "name": "agson",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Querying and manipulating JSON graphs",
   "main": "lib/agson.js",
   "scripts": {
