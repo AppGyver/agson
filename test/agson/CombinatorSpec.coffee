@@ -166,35 +166,34 @@ describe 'agson.combinators', ->
   describe 'union', ->
     {union, fromValidator} = combinators
 
-    Tree =
-      Leaf: (value) -> { value }
-      Tree: (left, right) -> { left, right }
-
-    LeafType = do ({Object, Any} = types) ->
-      Object
-        value: Any
-
-    TreeType = do ({OneOf, Object, Optional, recursive} = types) ->
-      OneOf([
-        LeafType
+    Leaf =
+      of: (value) -> { value }
+      type: do ({Object, Any} = types) ->
         Object
-          left: Optional recursive -> TreeType
-          right: Optional recursive -> TreeType
-      ])
+          value: Any
+    Tree =
+      of: (left, right) -> { left, right }
+      type: do ({OneOf, Object, Optional, recursive} = types) ->
+        OneOf([
+          Leaf.type
+          Object
+            left: Optional recursive -> Tree.type
+            right: Optional recursive -> Tree.type
+        ])
 
     describe 'tagged', ->
-      describe 'get', ->
-        tree = null
-        before ->
-          tree = union.tagged(
-            tree: fromValidator TreeType
-            leaf: fromValidator LeafType
-          )
+      tree = null
+      before ->
+        tree = union.tagged(
+          leaf: fromValidator Leaf.type
+          tree: fromValidator Tree.type
+        )
 
+      describe 'get', ->
         it 'can read one of the tagged types from root', ->
           tree
-            .run(Tree.Leaf 123)
+            .run(Leaf.of 123)
             .get()
-            .should.deep.equal Just Tree.Leaf 123
+            .should.deep.equal Just leaf: Leaf.of 123
 
           

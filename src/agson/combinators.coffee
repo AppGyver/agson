@@ -79,7 +79,9 @@ union =
       for tag, abl of tagsToLenses
         mb = abl.runM(ma).get()
         if mb.isJust
-          result = mb
+          tagged = {}
+          tagged[tag] = mb.get()
+          result = Just tagged
           break
       result
 
