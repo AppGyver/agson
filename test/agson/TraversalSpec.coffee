@@ -47,20 +47,14 @@ describe 'agson.traversals', ->
       }
 
       describe 'map', ->
-        it 'flattens Maybe List Maybe List into Maybe List List', ->
+        it 'flattens Maybe List Maybe List into Maybe List', ->
           list
             .then(list)
             .run([['foo', 'bar']])
             .map((v) -> v + 'qux')
-            .should.deep.equal Just [ ['fooqux', 'barqux'] ]
+            .should.deep.equal Just [ 'fooqux', 'barqux' ]
 
       describe 'get', ->
-        it 'does not flatten List List into List to preserve structure', ->
-          list
-            .then(list)
-            .run([['foo', 'bar'], ['qux']])
-            .get()
-            .should.deep.equal Just [['foo', 'bar'], ['qux']]
 
         it 'works with nested lists and objects', ->
           list
