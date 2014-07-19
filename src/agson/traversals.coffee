@@ -1,7 +1,7 @@
 {Just, Nothing, fromNullable} = require 'data.maybe'
 {maybeMap, maybeMapValues, isArray, isObject} = require './util'
 
-Traversal = require './Traversal'
+Traversal = require './types/Traversal'
 traversal = Traversal.of
 
 nothing =

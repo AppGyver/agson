@@ -1,5 +1,5 @@
 Maybe = require 'data.maybe'
-{notImplemented} = require './util'
+{notImplemented} = require '../util'
 Store = require('./Store')
 
 # Lens a b

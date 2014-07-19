@@ -1,5 +1,5 @@
 {Just} = require 'data.maybe'
-{notImplemented} = require './util'
+{notImplemented} = require '../util'
 
 # Monad m => Store m a
 module.exports = class Store

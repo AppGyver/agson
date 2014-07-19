@@ -1,6 +1,6 @@
 {Just, Nothing, fromNullable} = require 'data.maybe'
 
-lens = require('./Lens').of
+lens = require('./types/Lens').of
 
 nothing = lens "nothing", ->
   modify: Nothing

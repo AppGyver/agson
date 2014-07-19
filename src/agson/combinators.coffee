@@ -1,6 +1,6 @@
 {Just, Nothing, fromNullable, fromValidation} = require 'data.maybe'
 
-lens = require('./Lens').of
+lens = require('./types/Lens').of
 {identity} = require './lenses'
 
 # (ma -> boolean) -> Lens a b
