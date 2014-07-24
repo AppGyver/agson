@@ -9,7 +9,7 @@ module.exports = class Traversal extends Lens
   # (a -> { get, modify }) -> Traversal a b
   @of: (description ,fs) ->
     new class extends Traversal
-      runM: (mt) -> Store.of(Maybe)(fs mt)
+      runM: (mt) -> Store(Maybe).of(fs mt)
       toString: -> description
 
   then: (bc) => Traversal.of "#{@toString()}.then(#{bc.toString()})", (ma) =>

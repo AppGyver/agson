@@ -8,7 +8,7 @@ module.exports = class Lens
   # (Maybe a -> { get, modify }) -> Lens a b
   @of: (description, fs) ->
     new class extends Lens
-      runM: (ma) -> Store.of(Maybe)(fs ma)
+      runM: (ma) -> Store(Maybe).of(fs ma)
       toString: -> description
 
   # Maybe a -> Store Maybe b
