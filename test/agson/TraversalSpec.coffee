@@ -6,6 +6,8 @@ lenses = require '../../src/agson/lenses'
 combinators = require '../../src/agson/combinators'
 laws = require './laws'
 
+List = require('../../src/agson/types/List').fromArray
+
 describe 'agson.traversals', ->
 
   {identity, property} = lenses
@@ -17,7 +19,7 @@ describe 'agson.traversals', ->
       list
         .run(['foo', 'bar'])
         .get()
-        .should.deep.equal Just ['foo', 'bar']
+        .should.deep.equal List ['foo', 'bar']
 
     it 'sets each value in a list', ->
       list
@@ -175,7 +177,7 @@ describe 'agson.traversals', ->
       describe 'cons list', ->
         {product} = combinators
 
-        List =
+        L =
           Cons: (head, tail) -> {head, tail}
           Nil: {}
 
@@ -189,33 +191,33 @@ describe 'agson.traversals', ->
         it 'yields tuple with structure similar to input lens list on get', ->
           list
             .run(
-              List.Nil
+              L.Nil
             )
             .get()
             .should.deep.equal Nothing()
 
           list
             .run(
-              List.Cons 1, List.Nil
+              L.Cons 1, L.Nil
             )
             .get()
             .should.deep.equal Just [
-              List.Cons 1, List.Nil
+              L.Cons 1, L.Nil
             ]
 
           list
             .run(
-              List.Cons 1, List.Cons 2, List.Nil
+              L.Cons 1, L.Cons 2, L.Nil
             )
             .get()
             .should.deep.equal Just [
-              List.Cons 2, List.Nil
-              List.Cons 1, List.Cons 2, List.Nil
+              L.Cons 2, L.Nil
+              L.Cons 1, L.Cons 2, L.Nil
             ]
 
         it 'preserves structure on modify', ->
           list.run(
-            List.Cons 1, List.Cons 2, List.Cons 3, List.Nil
+            L.Cons 1, L.Cons 2, L.Cons 3, L.Nil
           )
-          .map(({head, tail}) -> List.Cons (head + 1), tail)
-          .should.deep.equal Just List.Cons 2, List.Cons 3, List.Cons 4, List.Nil
+          .map(({head, tail}) -> L.Cons (head + 1), tail)
+          .should.deep.equal Just L.Cons 2, L.Cons 3, L.Cons 4, L.Nil

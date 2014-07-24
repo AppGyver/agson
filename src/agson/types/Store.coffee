@@ -1,12 +1,14 @@
 {Just} = require 'data.maybe'
 {notImplemented} = require '../util'
 
-# Monad m => Store m a
+# Monad m -> Store m a b
 module.exports = (Monad) ->
   class StoreT
+    Monad: Monad
+    
     constructor: ({@get, @modify}) ->
 
-    # { get, modify } -> Store m a
+    # { get, modify } -> StoreT m a b
     @of: (s) ->
       new StoreT(
         modify: s.modify or notImplemented

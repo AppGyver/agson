@@ -1,14 +1,17 @@
-{Just, Nothing, fromNullable} = require 'data.maybe'
+Maybe = require 'data.maybe'
+{Just, Nothing, fromNullable} = Maybe
 {maybeMap, maybeMapValues, isArray, isObject} = require './util'
 
 Traversal = require './types/Traversal'
 traversal = Traversal.of
 
+List = require './types/List'
+
 nothing =
   modify: Nothing
   get: Nothing
 
-list = traversal "list", (mta) ->
+list = traversal "list", (ta) ->
   modify: (f) ->
     mta.chain (ta) ->
       unless isArray ta
@@ -17,12 +20,7 @@ list = traversal "list", (mta) ->
         Just maybeMap ta, (a) ->
           f fromNullable a
 
-  get: ->
-    mta.chain (ta) ->
-      unless isArray ta
-        Nothing()
-      else
-        Just ta
+  get: -> ta
 
 
 object =
