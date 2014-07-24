@@ -31,7 +31,7 @@ describe 'agson.traversals', ->
       list
         .run(['foo', 'bar'])
         .map((v) -> v + 'qux')
-        .should.deep.equal Just ['fooqux', 'barqux']
+        .should.deep.equal List ['fooqux', 'barqux']
 
     describe 'composition', ->
 
