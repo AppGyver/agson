@@ -2,4 +2,4 @@ LensT = require './LensT'
 List = require './List'
 
 # Traversable a => Traversal a b = LensT List a b
-module.exports = LensT(List)
+module.exports = LensT(List, List.fromArray)

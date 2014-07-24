@@ -1,8 +1,8 @@
 {notImplemented} = require '../util'
 Store = require('./Store')
 
-# Monad m => LensT m a b = a -> StoreT m a b
-module.exports = (Monad) ->
+# (Monad m, Any -> m a) => LensT m a b = a -> StoreT m a b
+module.exports = (Monad, point) ->
   class LensT
     Store: Store(Monad)
 
@@ -19,7 +19,7 @@ module.exports = (Monad) ->
     runM: notImplemented
 
     # a -> Store Maybe b
-    run: (a) -> @runM Monad.of a
+    run: (a) -> @runM point a
 
     # LensT m b c -> LensT m a c
     then: (bc) => LensT.of "#{@toString()}.then(#{bc.toString()})", (ma) =>
