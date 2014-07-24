@@ -42,8 +42,15 @@ ListT = (Monad) ->
 
     # (a -> ListT m b) -> ListT m b
     chain: (f) ->
-      new ListTM @mxs.chain (xs) =>
-        sequence(xs.map((x) -> f.bind(ListTM)(x).get())).chain (yss) ->
-          Monad.of new List flatten yss
+      # Bind to class scope to get access to fromList, fromArray helpers
+      f = f.bind(ListTM)
+
+      mys = @mxs.chain (xs) ->
+        myss = xs.map (x) -> f(x).get()
+        sequence(myss).chain (yss) ->
+          ys = flatten yss
+          Monad.of new List ys
+
+      new ListTM mys
 
 module.exports = ListT
