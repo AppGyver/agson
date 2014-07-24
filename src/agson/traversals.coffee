@@ -25,20 +25,22 @@ list = traversal "list", (mta) ->
         Just ta
 
 
-object = traversal "object", (mo) ->
-  modify: (f) ->
-    mo.map (object) ->
-      unless isObject object
-        Nothing()
-      else
-        maybeMapValues object, (value) ->
-          f fromNullable value
-  get: ->
-    mo.chain (object) ->
-      unless isObject object
-        Nothing()
-      else
-        Just object
+object =
+  values:
+    traversal "object.values", (mo) ->
+      modify: (f) ->
+        mo.map (object) ->
+          unless isObject object
+            Nothing()
+          else
+            maybeMapValues object, (value) ->
+              f fromNullable value
+      get: ->
+        mo.chain (object) ->
+          unless isObject object
+            Nothing()
+          else
+            Just [value for key, value of object]
 
 # (() -> Lens a b) -> Lens a b
 recurse = (lensf) -> traversal "recurse(...)", (ma) ->
