@@ -12,16 +12,8 @@ nothing =
   get: Nothing
 
 list = traversal "list", (ta) ->
-  modify: (f) ->
-    mta.chain (ta) ->
-      unless isArray ta
-        Nothing()
-      else
-        Just maybeMap ta, (a) ->
-          f fromNullable a
-
+  modify: (f) -> ta.chain f
   get: -> ta
-
 
 object =
   values:

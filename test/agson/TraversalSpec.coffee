@@ -25,7 +25,7 @@ describe 'agson.traversals', ->
       list
         .run(['foo', 'bar'])
         .set('baz')
-        .should.deep.equal Just ['baz', 'baz']
+        .should.deep.equal List ['baz', 'baz']
 
     it 'maps over the list', ->
       list
