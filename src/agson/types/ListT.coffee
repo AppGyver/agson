@@ -26,6 +26,9 @@ ListT = (Monad) ->
     # List a -> ListT m a
     @fromList: (list) -> new ListTM Monad.of list
 
+    # [a] -> ListT m a
+    @fromArray: (array) -> new ListTM Monad.of List.fromArray array
+
     # m List a -> ListT m a
     constructor: (@mxs) ->
 
@@ -40,7 +43,7 @@ ListT = (Monad) ->
     # (a -> ListT m b) -> ListT m b
     chain: (f) ->
       new ListTM @mxs.chain (xs) =>
-        sequence(xs.map((x) -> f(x).get())).chain (yss) ->
+        sequence(xs.map((x) -> f.bind(ListTM)(x).get())).chain (yss) ->
           Monad.of new List flatten yss
 
 module.exports = ListT

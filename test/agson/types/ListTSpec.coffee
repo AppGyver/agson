@@ -26,8 +26,7 @@ describe 'agson.types.ListT', ->
     it 'flatmaps a maybe-list-generating function', ->
       ListTMaybe.fromList(List.of 1)
         .chain((n) ->
-          ListTMaybe.fromList List.fromArray [n + 1, n + 2, n+ 3]
+          @fromArray [n + 1, n + 2, n+ 3]
         )
         .get()
         .should.deep.equal Just [2, 3, 4]
-
