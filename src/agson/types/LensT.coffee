@@ -8,7 +8,7 @@ module.exports = (Monad) ->
 
     constructor: ({@run, @toString}) ->
 
-    # (a -> { get, modify }) -> LensT m a b
+    # (a -> { get, set }) -> LensT m a b
     @of: (description, fs) ->
       new LensT(
         run: (a) -> @Store.of(fs a)
@@ -16,15 +16,17 @@ module.exports = (Monad) ->
       )
 
     # a -> StoreT m a b
-    run: notImplemented
+    run: notImplemented("run")
 
     # LensT m b c -> LensT m a c
     then: (bc) => LensT.of "#{@toString()}.then(#{bc.toString()})", (a) =>
 
-      # (m c -> m c) -> m a
-      modify: (f) =>
-        @run(a).modify (b) ->
-          bc.run(b).modify(f)
+      # m c -> m a
+      set: (mc) =>
+        abs = @run(a)
+        abs.get().chain (b) ->
+          bcs = bc.run(b)
+          abs.set bcs.set(mc)
 
       # () -> m c
       get: =>

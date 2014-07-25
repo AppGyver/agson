@@ -1,5 +1,5 @@
 module.exports =
-  notImplemented: -> throw new Error 'not implemented'
+  notImplemented: (method) -> -> throw new Error "#{@.constructor.name}::#{method} not implemented"
 
   maybeMap: (xs, f) ->
     ys = []

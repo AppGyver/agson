@@ -3,32 +3,38 @@
 lens = require('./types/Lens').of
 
 nothing = lens "nothing", ->
-  modify: Nothing
+  set: Nothing
   get: Nothing
 
-identity = lens "identity", (ma) ->
-  modify: (f) -> f ma
-  get: -> ma
+identity = lens "identity", (a) ->
+  set: (ma) -> ma
+  get: -> fromNullable a
 
 constant = (value) -> lens "constant(#{value})", ->
-  modify: -> fromNullable value
+  set: -> fromNullable value
   get: -> fromNullable value
 
 property = (key) -> lens "property(#{key})", (object) ->
-  setProperty = withProperty key
+  set = setProperty(object, key)
 
-  modify: (f) ->
-    mv = fromNullable(object[key])
-    f(mv).chain (value) ->
-      Just setProperty(object, value)
-  get: ->
-    fromNullable object?[key]
+  set: (mv) ->
+    mv.fold(
+      -> Just set null
+      (value) -> Just set value
+    )
+  get: -> fromNullable object?[key]
 
-withProperty = (key) -> (object, value) ->
+setProperty = (object, key) -> (value) ->
   result = {}
+  
   for own k, v of object
     result[k] = v
-  result[key] = value
+  
+  if value?
+    result[key] = value
+  else
+    delete result[key]
+
   result
 
 module.exports = {

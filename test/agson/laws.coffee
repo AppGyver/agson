@@ -32,12 +32,12 @@ module.exports =
       if set?
         it 'holds for set', ->
           for data in runAll || [run]
-            left.run(data).set(set).should.deep.equal right.run(data).set(set)
+            left.run(data).modify(-> set).from().should.deep.equal right.run(data).modify(-> set).from()
 
       if modify?
         it 'holds for modify', ->
           for data in runAll || [run]
-            left.run(data).modify(modify).should.deep.equal right.run(data).modify(modify)
+            left.run(data).modify(modify).from().should.deep.equal right.run(data).modify(modify).from()
 
       it 'holds for get', ->
         for data in runAll || [run]
