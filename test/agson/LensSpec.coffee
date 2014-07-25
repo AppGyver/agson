@@ -15,18 +15,28 @@ describe 'agson.lenses', ->
     it 'sets nothing', ->
       nothing.run('anything').set('anything').should.deep.equal Nothing()
     it 'refuses modification', ->
-      nothing.run('foo')
-        .map(-> throw new Error 'should not get here')
+      nothing
+        .run('foo')
+        .modify(-> throw new Error 'should not get here')
+        .get()
         .should.deep.equal Nothing()
 
   describe 'identity', ->
     it 'gets the same value as passed', ->
-      identity.run('foo').get().should.deep.equal Just 'foo'
+      identity
+        .run('foo')
+        .get()
+        .should.deep.equal Just 'foo'
     it 'sets the same value as passed', ->
-      identity.run('foo').set('bar').should.deep.equal Just 'bar'
+      identity
+        .run('foo')
+        .set(Just 'bar')
+        .should.deep.equal Just 'bar'
     it 'modifies value with the same value as passed', ->
-      identity.run('foo')
-        .map((v) -> v + 'bar')
+      identity
+        .run('foo')
+        .modify((v) -> v + 'bar')
+        .get()
         .should.deep.equal Just 'foobar'
 
     describe 'composition', ->
@@ -46,9 +56,15 @@ describe 'agson.lenses', ->
   describe 'constant', ->
     {constant} = lenses
     it 'ignores value', ->
-      constant('foo').run('whatever').get().should.deep.equal Just 'foo'
+      constant('foo')
+        .run('whatever')
+        .get()
+        .should.deep.equal Just 'foo'
     it 'ignores set', ->
-      constant('foo').run('whaterver').set('bar').should.deep.equal Just 'foo'
+      constant('foo')
+        .run('whaterver')
+        .set('bar')
+        .should.deep.equal Just 'foo'
 
     describe 'composition', ->
       laws.identity(identity)(constant('foo')) {
