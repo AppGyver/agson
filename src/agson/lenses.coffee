@@ -14,17 +14,15 @@ constant = (value) -> lens "constant(#{value})", ->
   modify: -> fromNullable value
   get: -> fromNullable value
 
-property = (key) -> lens "property(#{key})", (mo) ->
+property = (key) -> lens "property(#{key})", (object) ->
   setProperty = withProperty key
 
   modify: (f) ->
-    mo.chain (object) ->
-      mv = fromNullable(object[key])
-      f(mv).chain (value) ->
-        Just setProperty(object, value)
+    mv = fromNullable(object[key])
+    f(mv).chain (value) ->
+      Just setProperty(object, value)
   get: ->
-    mo.chain (object) ->
-      fromNullable object[key]
+    fromNullable object?[key]
 
 withProperty = (key) -> (object, value) ->
   result = {}
