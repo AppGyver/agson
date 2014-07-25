@@ -49,12 +49,12 @@ describe 'agson.traversals', ->
       }
 
       describe.skip 'map', ->
-        it 'flattens Maybe List Maybe List into Maybe List', ->
+        it 'flattens List List into List', ->
           list
             .then(list)
             .run([['foo', 'bar']])
             .map((v) -> v + 'qux')
-            .should.deep.equal Just [ 'fooqux', 'barqux' ]
+            .should.deep.equal List [ 'fooqux', 'barqux' ]
 
       describe 'get', ->
 
@@ -63,13 +63,13 @@ describe 'agson.traversals', ->
             .then(property 'foo')
             .run([{ foo: 'bar'}, { foo: 'qux' }])
             .get()
-            .should.deep.equal Just ['bar', 'qux']
+            .should.deep.equal List ['bar', 'qux']
 
           property('foo')
             .then(list)
             .run({foo: [ 1, 2, 3 ]})
             .get()
-            .should.deep.equal Just [ 1, 2, 3 ]
+            .should.deep.equal List [ 1, 2, 3 ]
 
   describe 'object.values', ->
     {object: {values}} = traversals
@@ -78,7 +78,7 @@ describe 'agson.traversals', ->
       values
         .run(foo: 'bar')
         .get()
-        .should.deep.equal Just ['bar']
+        .should.deep.equal List ['bar']
 
     it 'sets each property on an object', ->
       values
