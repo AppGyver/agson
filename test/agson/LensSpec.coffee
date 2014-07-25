@@ -83,24 +83,47 @@ describe 'agson.lenses', ->
   describe 'property', ->
     {property} = lenses
     it 'gets a property on an object', ->
-      property('foo').run({ foo: 'bar' }).get().should.deep.equal Just 'bar'
-      property('bar').run({}).get().should.deep.equal Nothing()
+      property('foo')
+        .run({ foo: 'bar' })
+        .get()
+        .should.deep.equal Just 'bar'
+      property('bar')
+        .run({})
+        .get()
+        .should.deep.equal Nothing()
 
     it 'sets a property on an object', ->
-      property('foo').run({ foo: 'whatever'}).set('bar').should.deep.equal Just {
-        foo: 'bar'
-      }
+      property('foo')
+        .run({ foo: 'whatever'})
+        .set(Just 'bar')
+        .should.deep.equal Just {
+          foo: 'bar'
+        }
+
+    it 'does set property if it is not there', ->
+      property('foo')
+        .run({})
+        .set(Just 'bar')
+        .should.deep.equal Just foo: 'bar'
+
+      property('foo')
+        .run({})
+        .set(Nothing())
+        .should.deep.equal Just {}
 
     describe 'composition', ->
       it 'allows access to nested objects', ->
         [foo, bar] = [property('foo'), property('bar')]
-        foo.then(bar).run({ foo: bar: 'qux' }).get().should.deep.equal Just 'qux'
-        foo.then(bar).run({ foo: bar: 'qux' }).set('baz').should.deep.equal Just {
-          foo: bar: 'baz'
-        }
-
-      it 'does set property if it is not there', ->
-        property('foo').run({}).set('bar').should.deep.equal Just foo: 'bar'
+        foo.then(bar)
+          .run({ foo: bar: 'qux' })
+          .get()
+          .should.deep.equal Just 'qux'
+        foo.then(bar)
+          .run({ foo: bar: 'qux' })
+          .set(Just 'baz')
+          .should.deep.equal Just {
+            foo: bar: 'baz'
+          }
 
       laws.identity(identity)(property('foo')) {
         runAll: [

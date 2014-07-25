@@ -18,10 +18,8 @@ property = (key) -> lens "property(#{key})", (object) ->
   set = setProperty(object, key)
 
   set: (mv) ->
-    mv.fold(
-      -> Just set null
-      (value) -> Just set value
-    )
+    mv.map(set)
+      .orElse(-> Just set null)
   get: -> fromNullable object?[key]
 
 setProperty = (object, key) -> (value) ->
