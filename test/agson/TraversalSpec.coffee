@@ -48,15 +48,14 @@ describe 'agson.traversals', ->
         set: 'qux'
       }
 
-      describe.skip 'map', ->
+      describe 'get', ->
+
         it 'flattens List List into List', ->
           list
             .then(list)
-            .run([['foo', 'bar']])
-            .map((v) -> v + 'qux')
-            .should.deep.equal List [ 'fooqux', 'barqux' ]
-
-      describe 'get', ->
+            .run([['foo', 'bar'], ['qux']])
+            .get()
+            .should.deep.equal List [ 'foo', 'bar', 'qux' ]
 
         it 'works with nested lists and objects', ->
           list

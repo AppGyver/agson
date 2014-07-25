@@ -13,7 +13,7 @@ nothing =
 
 list = traversal "list", (ta) ->
   modify: (f) -> ta.chain f
-  get: -> ta
+  get: -> List.fromArray ta
 
 object =
   values:
