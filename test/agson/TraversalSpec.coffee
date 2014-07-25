@@ -37,12 +37,12 @@ describe 'agson.traversals', ->
 
       laws.associativity(
         list
-        property 'foo'
+        list
         list
       ) {
         run: [
-          { foo: [ 1, 2, 3 ] }
-          { foo: [ 4, 5, 6 ] }
+          [ [1], [2, 3] ]
+          [ [4, 5, 6] ]
         ]
         map: (v) -> v + 1
         set: 'qux'
