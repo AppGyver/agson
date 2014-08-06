@@ -18,7 +18,7 @@ class Store
   from: notImplemented
 
   # Set something in place of the focused thing.
-  # (b) -> Store s b
+  # (f b) -> Store s b
   set: notImplemented
 
   # Map the output as a whole to something else
