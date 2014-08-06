@@ -29,6 +29,10 @@ class Store
   # (m -> (m -> a -> m)) -> Store m a
   fold: notImplemented
 
+  # Extend the Store by calculating a new view of it
+  # (Store s a -> f b) -> Store s b
+  extend: notImplemented
+
 # Monad m -> Store m a b
 module.exports = (Monad) ->
   class StoreT
