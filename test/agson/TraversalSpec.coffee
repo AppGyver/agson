@@ -21,26 +21,19 @@ describe 'agson.traversals', ->
         .get()
         .should.deep.equal List ['foo', 'bar']
 
+    it 'sets each value in a list', ->
       list
         .run(['foo', 'bar'])
-        .set(List ['qux'])
-        .should.deep.equal List ['qux']
-
-    it 'modifies each value in a list', ->
-      list
-        .run(['foo', 'bar'])
-        .modify(-> 'baz')
-        .from()
+        .set('baz')
         .should.deep.equal List ['baz', 'baz']
 
-    it 'maps over the output list', ->
+    it 'maps over the list', ->
       list
         .run(['foo', 'bar'])
-        .map((v) -> v.concat List ['qux'])
-        .from()
-        .should.deep.equal List ['foo', 'bar', 'qux']
+        .map((v) -> v + 'qux')
+        .should.deep.equal List ['fooqux', 'barqux']
 
-    describe.skip 'composition', ->
+    describe 'composition', ->
 
       laws.associativity(
         list
@@ -51,7 +44,7 @@ describe 'agson.traversals', ->
           [ [1], [2, 3] ]
           [ [4, 5, 6] ]
         ]
-        modify: (v) -> v + 1
+        map: (v) -> v + 1
         set: 'qux'
       }
 

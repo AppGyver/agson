@@ -38,38 +38,26 @@ module.exports = (Monad) ->
   class StoreT
     Monad: Monad
     
-    constructor: ({@get, @set}) ->
+    constructor: ({@get, @modify}) ->
 
-    # { get, set } -> StoreT m a b
+    # { get, modify } -> StoreT m a b
     @of: (s) ->
       new StoreT(
-        get: s.get or StoreT::get
-        set: s.set or StoreT::set
+        modify: s.modify or notImplemented
+        get: s.get or notImplemented
       )
 
-    # m a -> m b
-    set: notImplemented("set")
+    # (m a -> m b) -> m b
+    modify: notImplemented
 
     # () -> m a
-    get: notImplemented("get")
+    get: notImplemented
 
-    # (Store m a b) -> c -> Store m c b
-    extend: (f) ->
-      new StoreT {
-        get: => f this
-        set: @set
-      }
+    # b -> m b
+    set: (b) ->
+      @modify -> Monad.of b
 
-    # () -> m b
-    from: -> @set @get()
-
-    # (m b -> m c) -> Store m a c
+    # (a -> b) -> m b
     map: (f) ->
-      new StoreT {
-        get: @get
-        set: (ma) => f @set ma
-      }
-
-    # (a -> c) -> Store m c b
-    modify: (f) ->
-      @extend (s) -> s.get().map f
+      @modify (a) ->
+        Monad.of f a

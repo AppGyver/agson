@@ -11,9 +11,9 @@ nothing =
   modify: Nothing
   get: Nothing
 
-list = traversal "list", (array) ->
-  set: (l) -> l
-  get: -> List.fromArray array
+list = traversal "list", (ta) ->
+  modify: (f) -> ta.chain f
+  get: -> List.fromArray ta
 
 object =
   values:
