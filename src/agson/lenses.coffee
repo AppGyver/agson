@@ -11,8 +11,9 @@ identity = lens "identity", (a) ->
   get: -> fromNullable a
 
 constant = (value) -> lens "constant(#{value})", ->
-  set: -> fromNullable value
-  get: -> fromNullable value
+  mv = fromNullable value
+  set: -> mv
+  get: -> mv
 
 property = (key) -> lens "property(#{key})", (object) ->
   set = setProperty(object, key)
