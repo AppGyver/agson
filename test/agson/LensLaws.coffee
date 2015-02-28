@@ -5,21 +5,21 @@ deepEqual = require 'deep-equal'
 module.exports =
   # Verify that the lens 'identity' is the left and right identity for the lens 'l'
   # (ab + 0) = (0 + ab)
-  identity: (identity) -> (l) ->
-    describe "identity with lens #{identity.toString()}", ->
-      left = identity.then(l)
-      right = l.then(identity)
+  identity: (identity) -> (lens) ->
+    describe "identity", ->
+      left = identity.then(lens)
+      right = lens.then(identity)
 
       describe "get", ->
         jsc.property "left identity", "json", (a) ->
           deepEqual(
-            Just a
+            lens.run(a).get()
             left.run(a).get()
           )
 
         jsc.property "right identity", "json", (a) ->
           deepEqual(
-            Just a
+            lens.run(a).get()
             right.run(a).get()
           )
 
@@ -27,26 +27,26 @@ module.exports =
 
         jsc.property "left identity", "json", (a) ->
           deepEqual(
-            Nothing()
+            lens.run(a).modify(Nothing)
             left.run(a).modify(Nothing)
           )
 
         jsc.property "right identity", "json", (a) ->
           deepEqual(
-            Nothing()
+            lens.run(a).modify(Nothing)
             right.run(a).modify(Nothing)
           )
 
       describe "modify to anything", ->
         jsc.property "left identity", "json", "json -> json", (a, f) ->
           deepEqual(
-            Just f a
+            lens.run(a).modify((ma) -> ma.map f)
             left.run(a).modify((ma) -> ma.map f)
           )
 
         jsc.property "right identity", "json", "json -> json", (a, f) ->
           deepEqual(
-            Just f a
+            lens.run(a).modify((ma) -> ma.map f)
             right.run(a).modify((ma) -> ma.map f)
           )
 

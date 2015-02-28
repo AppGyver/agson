@@ -88,19 +88,9 @@ describe 'agson.lenses', ->
             constant(a).run(b).modify((mb) -> mb.map f)
           )
 
-    describe "composition", ->
-      laws.identity(identity)(constant('foo')) {
-        run: 'bar'
-        set: 'bar'
-      }
-      laws.associativity(
-        constant('foo')
-        constant('bar')
-        constant('qux')
-      ) {
-        run: 'anything'
-        set: 'anything'
-      }
+      describe 'composition', ->
+        LensLaws.identity(identity)(constant 'foo')
+        LensLaws.associativity(identity, identity)(constant 'foo')
 
   describe 'property', ->
     {property} = lenses
