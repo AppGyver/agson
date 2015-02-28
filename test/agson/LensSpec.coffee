@@ -66,18 +66,29 @@ describe 'agson.lenses', ->
 
   describe 'constant', ->
     {constant} = lenses
-    it 'ignores value', ->
-      constant('foo')
-        .run('whatever')
-        .get()
-        .should.deep.equal Just 'foo'
-    it 'ignores set', ->
-      constant('foo')
-        .run('whaterver')
-        .set('bar')
-        .should.deep.equal Just 'foo'
+    describe 'semantics', ->
 
-    describe 'composition', ->
+      describe "when input is non-null", ->
+
+        jsc.property 'ignores the value', 'json', 'json', (a, b) ->
+          deepEqual(
+            Just a
+            constant(a).run(b).get()
+          )
+
+        jsc.property 'ignores modify to nothing', 'json', 'json', (a, b) ->
+          deepEqual(
+            Just a
+            constant(a).run(b).modify(Nothing)
+          )
+
+        jsc.property 'ignores modify to anything', 'json', 'json', 'json -> json', (a, b, f) ->
+          deepEqual(
+            Just a
+            constant(a).run(b).modify((mb) -> mb.map f)
+          )
+
+    describe "composition", ->
       laws.identity(identity)(constant('foo')) {
         run: 'bar'
         set: 'bar'
