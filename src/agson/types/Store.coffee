@@ -61,5 +61,5 @@ module.exports = (Monad) ->
 
     # (a -> b) -> m b
     map: (f) ->
-      @modify (a) ->
-        Monad.of f a
+      @modify (ma) ->
+        ma.map f
