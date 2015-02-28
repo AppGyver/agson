@@ -34,22 +34,29 @@ describe 'agson.lenses', ->
 
   describe 'identity', ->
     describe "semantics", ->
-      it 'gets the same value as passed', ->
-        identity
-          .run('foo')
-          .get()
-          .should.deep.equal Just 'foo'
-      it 'sets the same value as passed', ->
-        identity
-          .run('foo')
-          .set(Just 'bar')
-          .should.deep.equal Just 'bar'
-      it 'modifies value with the same value as passed', ->
-        identity
-          .run('foo')
-          .modify((v) -> v + 'bar')
-          .get()
-          .should.deep.equal Just 'foobar'
+      jsc.property "gets the value itself", "json", (v) ->
+        deepEqual(
+          Just v
+          identity.run(v).get()
+        )
+
+      jsc.property "sets the value to the one passed", "json", "json", (a, b) ->
+        deepEqual(
+          Just b
+          identity.run(a).set(b)
+        )
+
+      jsc.property "can be modified to nothing", "json", (a) ->
+        deepEqual(
+          Nothing()
+          identity.run(a).modify(Nothing)
+        )
+
+      jsc.property "can be modified to anything", "json", "json", (a, b) ->
+        deepEqual(
+          Just b
+          identity.run(a).modify((ma) -> Just b)
+        )
 
     describe 'composition', ->
       laws.identity(identity)(identity) {
