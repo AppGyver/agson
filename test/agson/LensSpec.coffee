@@ -1,5 +1,8 @@
-{Just, Nothing} = require 'data.maybe'
 require('chai').should()
+jsc = require 'jsverify'
+deepEqual = require 'deep-equal'
+
+{Just, Nothing} = require 'data.maybe'
 lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
 
@@ -11,23 +14,23 @@ describe 'agson.lenses', ->
   describe 'nothing', ->
     {nothing} = lenses
 
-    it 'gets nothing', ->
-      nothing
-        .run('anything')
-        .get()
-        .should.deep.equal Nothing()
+    jsc.property "gets nothing from value", "json", (v) ->
+      deepEqual(
+        Nothing()
+        nothing.run(v).get()
+      )
 
-    it 'sets nothing', ->
-      nothing
-        .run('anything')
-        .set('anything')
-        .should.deep.equal Nothing()
+    jsc.property "sets nothing as value", "json", "json", (a, b) ->
+      deepEqual(
+        Nothing()
+        nothing.run(a).set(b)
+      )
 
-    it 'refuses modification', ->
-      nothing
-        .run('foo')
-        .modify(-> throw new Error 'should not get here')
-        .should.deep.equal Nothing()
+    jsc.property "refuses modification to value", "json", (a) ->
+      deepEqual(
+        Nothing()
+        nothing.run(a).modify(-> throw new Error 'should not get here')
+      )
 
   describe 'identity', ->
     describe "semantics", ->
