@@ -7,6 +7,7 @@ lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
 
 laws = require './laws'
+LensLaws = require './LensLaws'
 
 describe 'agson.lenses', ->
   {identity} = lenses
@@ -59,18 +60,9 @@ describe 'agson.lenses', ->
         )
 
     describe 'composition', ->
-      laws.identity(identity)(identity) {
-        run: 'foo'
-        set: 'bar'
-      }
-      laws.associativity(
-        identity
-        identity
-        identity
-      ) {
-        run: 'foo'
-        set: 'bar'
-      }
+      LensLaws.identity(identity)(identity)
+      LensLaws.associativity(identity, identity)(identity)
+
 
   describe 'constant', ->
     {constant} = lenses
