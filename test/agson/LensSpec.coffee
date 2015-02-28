@@ -10,10 +10,19 @@ describe 'agson.lenses', ->
 
   describe 'nothing', ->
     {nothing} = lenses
+
     it 'gets nothing', ->
-      nothing.run('anything').get().should.deep.equal Nothing()
+      nothing
+        .run('anything')
+        .get()
+        .should.deep.equal Nothing()
+
     it 'sets nothing', ->
-      nothing.run('anything').set('anything').should.deep.equal Nothing()
+      nothing
+        .run('anything')
+        .set('anything')
+        .should.deep.equal Nothing()
+
     it 'refuses modification', ->
       nothing
         .run('foo')
