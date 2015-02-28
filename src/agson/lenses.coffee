@@ -12,8 +12,9 @@ identity = lens "identity", (ma) ->
 
 constant = (value) -> lens "constant(#{value})", ->
   mv = fromNullable value
-  modify: -> fromNullable value
-  get: -> fromNullable value
+  modify: -> mv
+  get: -> mv
+
 property = (key) -> lens "property(#{key})", (object) ->
   setProperty = withProperty key
 
