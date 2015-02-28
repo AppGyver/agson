@@ -27,7 +27,6 @@ describe 'agson.lenses', ->
       nothing
         .run('foo')
         .modify(-> throw new Error 'should not get here')
-        .get()
         .should.deep.equal Nothing()
 
   describe 'identity', ->
