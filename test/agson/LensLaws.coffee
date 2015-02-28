@@ -11,13 +11,13 @@ module.exports =
       right = lens.then(identity)
 
       describe "get", ->
-        jsc.property "left identity", "json", (a) ->
+        jsc.property "#{lens}.get == #{left}.get", "json", (a) ->
           deepEqual(
             lens.run(a).get()
             left.run(a).get()
           )
 
-        jsc.property "right identity", "json", (a) ->
+        jsc.property "#{lens}.get == #{right}.get", "json", (a) ->
           deepEqual(
             lens.run(a).get()
             right.run(a).get()
@@ -25,26 +25,26 @@ module.exports =
 
       describe "modify to nothing", ->
 
-        jsc.property "left identity", "json", (a) ->
+        jsc.property "#{lens}.modify(Nothing) == #{left}.modify(Nothing)", "json", (a) ->
           deepEqual(
             lens.run(a).modify(Nothing)
             left.run(a).modify(Nothing)
           )
 
-        jsc.property "right identity", "json", (a) ->
+        jsc.property "#{lens}.modify(Nothing) == #{right}.modify(Nothing)", "json", (a) ->
           deepEqual(
             lens.run(a).modify(Nothing)
             right.run(a).modify(Nothing)
           )
 
       describe "modify to anything", ->
-        jsc.property "left identity", "json", "json -> json", (a, f) ->
+        jsc.property "#{lens}.modify == #{left}.modify", "json", "json -> json", (a, f) ->
           deepEqual(
             lens.run(a).modify((ma) -> ma.map f)
             left.run(a).modify((ma) -> ma.map f)
           )
 
-        jsc.property "right identity", "json", "json -> json", (a, f) ->
+        jsc.property "#{lens}.modify == #{right}.modify", "json", "json -> json", (a, f) ->
           deepEqual(
             lens.run(a).modify((ma) -> ma.map f)
             right.run(a).modify((ma) -> ma.map f)
@@ -57,19 +57,19 @@ module.exports =
       left = ab.then bc.then cd
       right = (ab.then bc).then cd
 
-      jsc.property "get", "json", (a) ->
+      jsc.property "#{left}.get == #{right}.get", "json", (a) ->
         deepEqual(
           left.run(a).get()
           right.run(a).get()
         )
 
-      jsc.property "modify to nothing", "json", (a) ->
+      jsc.property "#{left}.modify(Nothing) == #{right}.modify(Nothing)", "json", (a) ->
         deepEqual(
           left.run(a).modify(Nothing)
           right.run(a).modify(Nothing)
         )
 
-      jsc.property "modify to anything", "json", "json -> json", (a, f) ->
+      jsc.property "#{left}.modify == #{right}.modify", "json", "json -> json", (a, f) ->
         deepEqual(
           left.run(a).modify((ma) -> ma.map f)
           right.run(a).modify((ma) -> ma.map f)
