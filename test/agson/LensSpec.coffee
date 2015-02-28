@@ -30,22 +30,23 @@ describe 'agson.lenses', ->
         .should.deep.equal Nothing()
 
   describe 'identity', ->
-    it 'gets the same value as passed', ->
-      identity
-        .run('foo')
-        .get()
-        .should.deep.equal Just 'foo'
-    it 'sets the same value as passed', ->
-      identity
-        .run('foo')
-        .set(Just 'bar')
-        .should.deep.equal Just 'bar'
-    it 'modifies value with the same value as passed', ->
-      identity
-        .run('foo')
-        .modify((v) -> v + 'bar')
-        .get()
-        .should.deep.equal Just 'foobar'
+    describe "semantics", ->
+      it 'gets the same value as passed', ->
+        identity
+          .run('foo')
+          .get()
+          .should.deep.equal Just 'foo'
+      it 'sets the same value as passed', ->
+        identity
+          .run('foo')
+          .set(Just 'bar')
+          .should.deep.equal Just 'bar'
+      it 'modifies value with the same value as passed', ->
+        identity
+          .run('foo')
+          .modify((v) -> v + 'bar')
+          .get()
+          .should.deep.equal Just 'foobar'
 
     describe 'composition', ->
       laws.identity(identity)(identity) {
