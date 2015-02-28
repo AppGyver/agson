@@ -1,27 +1,32 @@
 {notImplemented} = require '../util'
 Store = require('./Store')
 
-# (Monad m, Any -> m a) => LensT m a b = a -> StoreT m a b
+# (Monad m) => LensT m s a b = s -> StoreT m a b
 module.exports = (Monad) ->
   class LensT
     Store: Store(Monad)
 
     constructor: ({@run, @toString}) ->
 
-    # (a -> { get, modify }) -> LensT m a b
+    # (description: String, s -> {
+    #  get: () -> m a
+    #  modify: (f: (m a) -> (m b)) -> m b
+    # }) -> LensT m a b
     @of: (description, fs) ->
       new LensT(
         run: (a) -> @Store.of(fs a)
         toString: -> description
       )
 
-    # a -> StoreT m a b
+    # Run the lens on a value
+    # s -> StoreT m a b
     run: notImplemented
 
-    # LensT m b c -> LensT m a c
+    # Chain this lens on another lens
+    # (bc: LensT m b t c) -> LensT m s a c
     then: (bc) => LensT.of "#{@toString()}.then(#{bc.toString()})", (a) =>
 
-      # (m c -> m c) -> m a
+      # (f: m c -> m d) -> m d
       modify: (f) =>
         @run(a).modify (b) ->
           bc.run(b).modify(f)
