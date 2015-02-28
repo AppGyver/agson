@@ -6,32 +6,37 @@ module.exports = (Monad) ->
   class LensT
     Store: Store(Monad)
 
-    constructor: ({@run, @toString}) ->
+    constructor: ({@runM, @toString}) ->
 
-    # (description: String, s -> {
+    # (description: String, m s -> {
     #  get: () -> m a
     #  modify: (f: (m a) -> (m b)) -> m b
     # }) -> LensT m a b
     @of: (description, fs) ->
       new LensT(
-        run: (a) -> @Store.of(fs a)
+        runM: (a) -> @Store.of(fs a)
         toString: -> description
       )
 
     # Run the lens on a value
     # s -> StoreT m a b
-    run: notImplemented
+    run: (s) ->
+      @runM Monad.of s
+
+    # m s -> StoreT m a b
+    runM: notImplemented
+
 
     # Chain this lens on another lens
     # (bc: LensT m b t c) -> LensT m s a c
-    then: (bc) => LensT.of "#{@toString()}.then(#{bc.toString()})", (a) =>
+    then: (bc) => LensT.of "#{@toString()}.then(#{bc.toString()})", (ma) =>
 
       # (f: m c -> m d) -> m d
       modify: (f) =>
-        @run(a).modify (b) ->
-          bc.run(b).modify(f)
+        @runM(ma).modify (mb) ->
+          bc.runM(mb).modify(f)
 
       # () -> m c
       get: =>
-        @run(a).get().chain (b) ->
-          bc.run(b).get()
+        mb = @runM(ma).get()
+        bc.runM(mb).get()
