@@ -2,12 +2,12 @@ jsc = require 'jsverify'
 deepEqual = require 'deep-equal'
 {Just, Nothing} = require 'data.maybe'
 
-empty = jsc.elements [null, undefined]
+generators = require './generators'
 
 module.exports =
   # Verify that the lens 'identity' is the left and right identity for the lens 'l'
   # (ab + 0) = (0 + ab)
-  identity: (identity) -> (lens) -> (procase = jsc.json, countercase = empty) ->
+  identity: (identity) -> (lens) -> (procase = jsc.json, countercase = generators.emptyElements) ->
     describe "identity", ->
       left = identity.then(lens)
       right = lens.then(identity)
@@ -56,7 +56,7 @@ module.exports =
 
   # Most cases, this is what you'll want to prove
   # ab + (bc + cd) = (ab + bc) + cd
-  associativity: (ab, bc, cd) -> (procase = jsc.json, countercase = empty) ->
+  associativity: (ab, bc, cd) -> (procase = jsc.json, countercase = generators.emptyElements) ->
 
     arbitraryInput = jsc.oneof [procase, countercase]
 

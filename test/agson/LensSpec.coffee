@@ -9,6 +9,7 @@ traversals = require '../../src/agson/traversals'
 
 laws = require './laws'
 LensLaws = require './LensLaws'
+generators = require './generators'
 
 describe 'agson.lenses', ->
   {identity} = lenses
@@ -154,6 +155,9 @@ describe 'agson.lenses', ->
           )
 
     describe 'composition', ->
+      LensLaws.identity(identity)(property 'foo')(
+        generators.objectWithProperty('foo')
+      )
       ###
       TODO: These verify very little because the parametrized case 'foo' is not exercised
       LensLaws.identity(identity)(property 'foo')
