@@ -3,12 +3,15 @@ Validation = require 'data.validation'
 types = require 'ag-types'
 
 require('chai').should()
+jsc = require 'jsverify'
 
 lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
 combinators = require '../../src/agson/combinators'
 
 laws = require './laws'
+LensLaws = require './LensLaws'
+generators = require './generators'
 
 describe 'agson.combinators', ->
   {identity} = lenses
@@ -16,7 +19,7 @@ describe 'agson.combinators', ->
   describe 'where', ->
     {property} = lenses
     {where} = combinators
-    whereHasFoo = where (ma) ->
+    whereHasFoo = where "has foo", (ma) ->
       ma.map((a) -> a.foo?).getOrElse false
 
     describe 'get', ->
@@ -31,13 +34,10 @@ describe 'agson.combinators', ->
         whereHasFoo.run('bar').set('qux').should.deep.equal Just 'bar'
 
     describe 'composition', ->
-      laws.identity(identity)(whereHasFoo) {
-        runAll: [
-          { foo: 123 }
-          {}
-        ]
-        map: (v) -> v + 111
-      }
+      LensLaws.identity(identity)(whereHasFoo)(
+        generators.objectWithProperty('foo')
+        jsc.oneof [generators.emptyElements, generators.objectWithoutProperty('foo')]
+      )
 
       {list} = traversals
       laws.associativity(
