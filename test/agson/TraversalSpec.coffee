@@ -1,12 +1,15 @@
+require('chai').should()
+jsc = require 'jsverify'
+deepEqual = require 'deep-equal'
+
 {Just, Nothing} = require 'data.maybe'
 
-require('chai').should()
 traversals = require '../../src/agson/traversals'
 lenses = require '../../src/agson/lenses'
 combinators = require '../../src/agson/combinators'
-laws = require './laws'
-
 List = require('../../src/agson/types/List').fromArray
+
+laws = require './laws'
 
 describe 'agson.traversals', ->
 
@@ -16,23 +19,17 @@ describe 'agson.traversals', ->
     {list} = traversals
 
     describe 'semantics', ->
-      it 'is the identity for lists', ->
-        list
-          .run(['foo', 'bar'])
-          .get()
-          .should.deep.equal List ['foo', 'bar']
+      jsc.property "gets list items for any list", "array json", (a) ->
+        deepEqual(
+          List a
+          list.run(a).get()
+        )
 
-      it 'sets each value in a list', ->
-        list
-          .run(['foo', 'bar'])
-          .set('baz')
-          .should.deep.equal List ['baz', 'baz']
-
-      it 'maps over the list', ->
-        list
-          .run(['foo', 'bar'])
-          .map((v) -> v + 'qux')
-          .should.deep.equal List ['fooqux', 'barqux']
+      jsc.property "modifies the whole list in one step", "array json", "* -> json", (a, f) ->
+        deepEqual(
+          List(a).map f
+          list.run(a).modify (l) -> l.map f
+        )
 
     describe 'composition', ->
 
