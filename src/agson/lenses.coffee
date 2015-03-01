@@ -18,17 +18,16 @@ constant = (value) -> lens "constant(#{value})", ->
 property = (key) -> lens "property(#{key})", (mo) ->
   setProperty = withProperty key
   removeProperty = withoutProperty key
+  maybeKey = propertyFromObject key
 
   modify: (f) ->
     mo.chain (object) ->
-      mv = fromNullable(object[key])
-      f(mv)
+      f(maybeKey object)
         .map((value) -> setProperty object, value)
         .orElse(-> Just removeProperty object)
 
   get: ->
-    mo.chain (object) ->
-      fromNullable object?[key]
+    mo.chain maybeKey
 
 withProperty = (key) -> (object, value) ->
   result = {}
@@ -42,6 +41,9 @@ withoutProperty = (key) -> (object) ->
   for own k, v of object when k isnt key
     result[k] = v
   result
+
+propertyFromObject = (key) -> (object) ->
+  fromNullable object?[key]
 
 module.exports = {
   nothing
