@@ -111,7 +111,7 @@ describe 'agson.traversals', ->
     describe 'modify', ->
       it 'allows access to each matching level', ->
         foos = property('foo').then recurse -> foos
-        
+
         foos
           .run(foo: {})
           .map((v) -> v.bar = true ; v)

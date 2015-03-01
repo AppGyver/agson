@@ -10,7 +10,7 @@ module.exports =
           for data in runAll || [run]
             left.run(data).set(set)
               .should.deep.equal right.run(data).set(set)
-      
+
       if map?
         it 'holds for map', ->
           for data in runAll || [run]

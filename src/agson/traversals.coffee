@@ -35,7 +35,7 @@ object =
 # (() -> Lens a b) -> Lens a b
 recurse = (lensf) -> traversal "recurse(...)", (ma) ->
   abl = lensf()
-  
+
   modify: (f) ->
     ma.chain (a) ->
       storeb = abl.runM(ma)

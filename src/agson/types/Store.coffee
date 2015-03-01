@@ -24,7 +24,7 @@ class Store
   # Map the output as a whole to something else
   # (s -> t) -> Store t a
   map: notImplemented
-  
+
   # Collapse anything in the Store to a single value.
   # (m -> (m -> a -> m)) -> Store m a
   fold: notImplemented
@@ -37,7 +37,7 @@ class Store
 module.exports = (Monad) ->
   class StoreT
     Monad: Monad
-    
+
     constructor: ({@get, @modify}) ->
 
     # { get, modify } -> StoreT m a b
