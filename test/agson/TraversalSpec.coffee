@@ -15,23 +15,24 @@ describe 'agson.traversals', ->
   describe 'list', ->
     {list} = traversals
 
-    it 'is the identity for lists', ->
-      list
-        .run(['foo', 'bar'])
-        .get()
-        .should.deep.equal List ['foo', 'bar']
+    describe 'semantics', ->
+      it 'is the identity for lists', ->
+        list
+          .run(['foo', 'bar'])
+          .get()
+          .should.deep.equal List ['foo', 'bar']
 
-    it 'sets each value in a list', ->
-      list
-        .run(['foo', 'bar'])
-        .set('baz')
-        .should.deep.equal List ['baz', 'baz']
+      it 'sets each value in a list', ->
+        list
+          .run(['foo', 'bar'])
+          .set('baz')
+          .should.deep.equal List ['baz', 'baz']
 
-    it 'maps over the list', ->
-      list
-        .run(['foo', 'bar'])
-        .map((v) -> v + 'qux')
-        .should.deep.equal List ['fooqux', 'barqux']
+      it 'maps over the list', ->
+        list
+          .run(['foo', 'bar'])
+          .map((v) -> v + 'qux')
+          .should.deep.equal List ['fooqux', 'barqux']
 
     describe 'composition', ->
 
