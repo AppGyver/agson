@@ -61,8 +61,8 @@ describe 'agson.lenses', ->
         )
 
     describe 'composition', ->
-      LensLaws.identity(identity)(identity)
-      LensLaws.associativity(identity, identity, identity)
+      LensLaws.identity(identity)(identity)(jsc.json)
+      LensLaws.associativity(identity, identity, identity)(jsc.json)
 
 
   describe 'constant', ->
@@ -90,8 +90,8 @@ describe 'agson.lenses', ->
           )
 
       describe 'composition', ->
-        LensLaws.identity(identity)(constant 'foo')
-        LensLaws.associativity(identity, (constant 'foo'), identity)
+        LensLaws.identity(identity)(constant 'foo')(jsc.json)
+        LensLaws.associativity(identity, (constant 'foo'), identity)(jsc.json)
 
   describe 'property', ->
     {property} = lenses
