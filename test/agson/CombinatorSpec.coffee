@@ -19,8 +19,11 @@ describe 'agson.combinators', ->
   describe 'where', ->
     {property} = lenses
     {where} = combinators
-    whereHasFoo = where "has foo", (ma) ->
-      ma.map((a) -> a.foo?).getOrElse false
+    whereHasProp = (prop) ->
+      where "has #{prop}", (ma) ->
+        ma.map((a) -> a[prop]?).getOrElse false
+
+    whereHasFoo = whereHasProp "foo"
 
     describe 'get', ->
       it 'is identity if condition matches', ->
@@ -37,6 +40,23 @@ describe 'agson.combinators', ->
       LensLaws.identity(identity)(whereHasFoo)(
         generators.objectWithProperty('foo')
         jsc.oneof [generators.emptyElements, generators.objectWithoutProperty('foo')]
+      )
+      LensLaws.associativity(
+        whereHasProp 'foo'
+        whereHasProp 'bar'
+        whereHasProp 'qux'
+      )(
+        jsc.record {
+          foo: jsc.json
+          bar: jsc.json
+          qux: jsc.json
+        }
+        jsc.oneof [
+          generators.emptyElements
+          jsc.record { foo: jsc.json, bar: jsc.json }
+          jsc.record { foo: jsc.json, qux: jsc.json }
+          jsc.record { bar: jsc.json, qux: jsc.json }
+        ]
       )
 
       describe.skip 'with traversals', ->
