@@ -52,7 +52,7 @@ module.exports =
 
   # Most cases, this is what you'll want to prove
   # ab + (bc + cd) = (ab + bc) + cd
-  associativity: (ab, cd) -> (bc) ->
+  associativity: (ab, bc, cd) ->
     describe "associativity with lenses #{ab} and #{cd}", ->
       left = ab.then bc.then cd
       right = (ab.then bc).then cd

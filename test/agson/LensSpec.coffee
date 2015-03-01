@@ -62,7 +62,7 @@ describe 'agson.lenses', ->
 
     describe 'composition', ->
       LensLaws.identity(identity)(identity)
-      LensLaws.associativity(identity, identity)(identity)
+      LensLaws.associativity(identity, identity, identity)
 
 
   describe 'constant', ->
@@ -91,7 +91,7 @@ describe 'agson.lenses', ->
 
       describe 'composition', ->
         LensLaws.identity(identity)(constant 'foo')
-        LensLaws.associativity(identity, identity)(constant 'foo')
+        LensLaws.associativity(identity, (constant 'foo'), identity)
 
   describe 'property', ->
     {property} = lenses
