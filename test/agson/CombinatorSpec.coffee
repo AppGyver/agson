@@ -1,9 +1,10 @@
-{Just, Nothing} = require 'data.maybe'
+{Just, Nothing, fromValidation, fromNullable} = require 'data.maybe'
 Validation = require 'data.validation'
 types = require 'ag-types'
 
 require('chai').should()
 jsc = require 'jsverify'
+deepEqual = require 'deep-equal'
 
 lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
@@ -141,27 +142,41 @@ describe 'agson.combinators', ->
     {fromValidator} = combinators
     {list} = traversals
 
-    numberValidator = (input) ->
+    validateNumber = (input) ->
       if typeof input is 'number'
         Validation.Success input
       else
         Validation.Failure ['not a number']
 
-    numberList = list.then(fromValidator numberValidator)
+    jsc.property 'gets value when it passes validation', "json", (a) ->
+      deepEqual(
+        fromValidation(validateNumber a)
+        fromValidator(validateNumber).run(a).get()
+      )
 
-    describe 'get', ->
-      it 'gets items through validator', ->
-        numberList
-          .run([1, 2, 3, 'foo'])
-          .get()
-          .should.deep.equal Just [ 1, 2, 3 ]
+    jsc.property 'modifies value when it passes validation', "json", "* -> json", (a, f) ->
+      deepEqual(
+        fromValidation(validateNumber a).map(f).orElse -> Just a
+        fromValidator(validateNumber).run(a).modify (ma) -> ma.map f
+      )
 
-    describe 'modify', ->
-      it 'modifies items through validator', ->
-        numberList
-          .run([1, 2, 3, 'foo'])
-          .map((v) -> v + 1)
-          .should.deep.equal Just [2, 3, 4, 'foo']
+    describe.skip "composition with traversals", ->
+
+      numberList = list.then(fromValidator validateNumber)
+
+      describe 'get', ->
+        it 'gets items through validator', ->
+          numberList
+            .run([1, 2, 3, 'foo'])
+            .get()
+            .should.deep.equal Just [ 1, 2, 3 ]
+
+      describe 'modify', ->
+        it 'modifies items through validator', ->
+          numberList
+            .run([1, 2, 3, 'foo'])
+            .map((v) -> v + 1)
+            .should.deep.equal Just [2, 3, 4, 'foo']
 
   describe 'sum', ->
     {sum, fromValidator} = combinators
