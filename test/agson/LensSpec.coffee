@@ -159,22 +159,15 @@ describe 'agson.lenses', ->
         generators.objectWithProperty('foo')
         jsc.oneof [generators.emptyElements, generators.objectWithoutProperty('foo')]
       )
-
-      ###
-      TODO: These verify very little because the parametrized case 'foo' is not exercised
-      LensLaws.associativity(identity, (property 'foo'), identity)
-      ###
-
-      laws.associativity(
+      LensLaws.associativity(
         property 'foo'
         property 'bar'
         property 'qux'
-      ) {
-        runAll: [
-          { foo: bar: qux: 123 }
-          { foo: bar: 123 }
-          { foo: 123 }
-          {}
+      )(
+        generators.nestedObjectsWithProperties(['foo', 'bar', 'qux'])
+        jsc.oneof [
+          generators.nestedObjectsWithProperties(['foo', 'bar'])
+          generators.nestedObjectsWithProperties(['foo', 'qux'])
+          generators.nestedObjectsWithProperties(['bar', 'qux'])
         ]
-        set: 'qux'
-      }
+      )
