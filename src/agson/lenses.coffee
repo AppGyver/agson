@@ -15,21 +15,32 @@ constant = (value) -> lens "constant(#{value})", ->
   modify: -> mv
   get: -> mv
 
-property = (key) -> lens "property(#{key})", (object) ->
+property = (key) -> lens "property(#{key})", (mo) ->
   setProperty = withProperty key
+  removeProperty = withoutProperty key
 
   modify: (f) ->
-    mv = fromNullable(object[key])
-    f(mv).chain (value) ->
-      Just setProperty(object, value)
+    mo.chain (object) ->
+      mv = fromNullable(object[key])
+      f(mv)
+        .map((value) -> setProperty object, value)
+        .orElse(-> Just removeProperty object)
+
   get: ->
-    fromNullable object?[key]
+    mo.chain (object) ->
+      fromNullable object?[key]
 
 withProperty = (key) -> (object, value) ->
   result = {}
   for own k, v of object
     result[k] = v
   result[key] = value
+  result
+
+withoutProperty = (key) -> (object) ->
+  result = {}
+  for own k, v of object when k isnt key
+    result[k] = v
   result
 
 module.exports = {

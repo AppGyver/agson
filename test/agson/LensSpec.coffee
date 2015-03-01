@@ -1,6 +1,7 @@
 require('chai').should()
 jsc = require 'jsverify'
 deepEqual = require 'deep-equal'
+_ = require 'lodash'
 
 {Just, Nothing} = require 'data.maybe'
 lenses = require '../../src/agson/lenses'
@@ -94,34 +95,27 @@ describe 'agson.lenses', ->
 
   describe 'property', ->
     {property} = lenses
-    it 'gets a property on an object', ->
-      property('foo')
-        .run({ foo: 'bar' })
-        .get()
-        .should.deep.equal Just 'bar'
-      property('bar')
-        .run({})
-        .get()
-        .should.deep.equal Nothing()
+    describe "semantics", ->
+      jsc.property 'gets a property on an object', "map(json)", "string", "json", (object, key, value) ->
+        object[key] = value
+        deepEqual(
+          Just value
+          property(key).run(object).get()
+        )
 
-    it 'sets a property on an object', ->
-      property('foo')
-        .run({ foo: 'whatever'})
-        .set(Just 'bar')
-        .should.deep.equal Just {
-          foo: 'bar'
-        }
+      jsc.property 'removes property when modified to nothing', "map(json)", "string", "json", (object, key, value) ->
+        object[key] = value
+        deepEqual(
+          Just _.omit object, key
+          property(key).run(object).modify(Nothing)
+        )
 
-    it 'does set property if it is not there', ->
-      property('foo')
-        .run({})
-        .set(Just 'bar')
-        .should.deep.equal Just foo: 'bar'
-
-      property('foo')
-        .run({})
-        .set(Nothing())
-        .should.deep.equal Just {}
+      jsc.property 'changes object property when modified to anything', "map(json)", "string", "json", "json -> json", (object, key, value, f) ->
+        object[key] = value
+        deepEqual(
+          f(object[key])
+          property(key).run(object).modify((ma) -> ma.map f).get()[key]
+        )
 
     describe 'composition', ->
       it 'allows access to nested objects', ->
