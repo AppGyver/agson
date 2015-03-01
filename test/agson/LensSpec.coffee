@@ -157,20 +157,13 @@ describe 'agson.lenses', ->
     describe 'composition', ->
       LensLaws.identity(identity)(property 'foo')(
         generators.objectWithProperty('foo')
+        jsc.oneof [generators.emptyElements, generators.objectWithoutProperty('foo')]
       )
+
       ###
       TODO: These verify very little because the parametrized case 'foo' is not exercised
-      LensLaws.identity(identity)(property 'foo')
       LensLaws.associativity(identity, (property 'foo'), identity)
       ###
-
-      laws.identity(identity)(property('foo')) {
-        runAll: [
-          { foo: 'bar' }
-          {}
-        ]
-        set: 'qux'
-      }
 
       laws.associativity(
         property 'foo'

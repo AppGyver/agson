@@ -10,9 +10,14 @@ objectWithProperty = (property) ->
     show: contextAndValue.show
   }
 
+objectWithoutProperty = (property) ->
+  jsc.suchthat jsc.map(jsc.json), (object) ->
+    !object[property]?
+
 emptyElements = jsc.elements [null, undefined]
 
 module.exports = {
   objectWithProperty
+  objectWithoutProperty
   emptyElements
 }
