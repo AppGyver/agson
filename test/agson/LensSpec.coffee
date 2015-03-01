@@ -92,7 +92,7 @@ describe 'agson.lenses', ->
 
       describe 'composition', ->
         LensLaws.identity(identity)(constant 'foo')(jsc.json)
-        LensLaws.associativity(identity, (constant 'foo'), identity)(jsc.json)
+        LensLaws.associativity((constant 'foo'), (constant 'bar'), (constant 'qux'))(jsc.json)
 
   describe 'property', ->
     {property} = lenses
