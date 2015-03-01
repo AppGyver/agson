@@ -64,20 +64,23 @@ module.exports =
       left = ab.then bc.then cd
       right = (ab.then bc).then cd
 
-      jsc.property "#{left}.get == #{right}.get", arbitraryInput, (a) ->
-        deepEqual(
-          left.run(a).get()
-          right.run(a).get()
-        )
+      describe "get", ->
+        jsc.property "#{left}.get == #{right}.get", arbitraryInput, (a) ->
+          deepEqual(
+            left.run(a).get()
+            right.run(a).get()
+          )
 
-      jsc.property "#{left}.modify(Nothing) == #{right}.modify(Nothing)", arbitraryInput, (a) ->
-        deepEqual(
-          left.run(a).modify(Nothing)
-          right.run(a).modify(Nothing)
-        )
+      describe "modify to nothing", ->
+        jsc.property "#{left}.modify(Nothing) == #{right}.modify(Nothing)", arbitraryInput, (a) ->
+          deepEqual(
+            left.run(a).modify(Nothing)
+            right.run(a).modify(Nothing)
+          )
 
-      jsc.property "#{left}.modify == #{right}.modify", arbitraryInput, "* -> json", (a, f) ->
-        deepEqual(
-          left.run(a).modify((ma) -> ma.map f)
-          right.run(a).modify((ma) -> ma.map f)
-        )
+      describe "modify to anything", ->
+        jsc.property "#{left}.modify == #{right}.modify", arbitraryInput, "* -> json", (a, f) ->
+          deepEqual(
+            left.run(a).modify((ma) -> ma.map f)
+            right.run(a).modify((ma) -> ma.map f)
+          )
