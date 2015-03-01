@@ -1,8 +1,8 @@
 {notImplemented} = require '../util'
 Store = require('./Store')
 
-# (Monad m) => LensT m s a b = s -> StoreT m a b
-module.exports = (Monad) ->
+# (Monad m, lift: s -> m s) => LensT m s a b = s -> StoreT m a b
+module.exports = (Monad, lift) ->
   class LensT
     Store: Store(Monad)
 
@@ -21,7 +21,7 @@ module.exports = (Monad) ->
     # Run the lens on a value
     # s -> StoreT m a b
     run: (s) ->
-      @runM Monad.of s
+      @runM lift s
 
     # m s -> StoreT m a b
     runM: notImplemented
