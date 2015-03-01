@@ -117,19 +117,43 @@ describe 'agson.lenses', ->
           property(key).run(object).modify((ma) -> ma.map f).get()[key]
         )
 
+      describe "nesting", ->
+
+        jsc.property 'allows reading from nested objects', 'string', 'string', 'json', (keyOne, keyTwo, v) ->
+          tree = {}
+          tree[keyOne] = {}
+          tree[keyOne][keyTwo] = v
+
+          deepEqual(
+            Just v
+            property(keyOne).then(property keyTwo).run(tree).get()
+          )
+
+        jsc.property 'removes nested property when modified to nothing', 'string', 'string', 'json', (keyOne, keyTwo, v) ->
+          tree = {}
+          tree[keyOne] = {}
+          tree[keyOne][keyTwo] = v
+
+          deepEqual(
+            Just do (tree = {}) ->
+              tree[keyOne] = {}
+              tree
+            property(keyOne).then(property keyTwo).run(tree).modify(Nothing)
+          )
+
+        jsc.property 'changes nested property when modified to something', 'string', 'string', 'json', 'json -> json', (keyOne, keyTwo, v, f) ->
+          tree = {}
+          tree[keyOne] = {}
+          tree[keyOne][keyTwo] = v
+          deepEqual(
+            Just do (tree = {}) ->
+              tree[keyOne] = {}
+              tree[keyOne][keyTwo] = f v
+              tree
+            property(keyOne).then(property keyTwo).run(tree).modify((ma) -> ma.map f)
+          )
+
     describe 'composition', ->
-      it 'allows access to nested objects', ->
-        [foo, bar] = [property('foo'), property('bar')]
-        foo.then(bar)
-          .run({ foo: bar: 'qux' })
-          .get()
-          .should.deep.equal Just 'qux'
-        foo.then(bar)
-          .run({ foo: bar: 'qux' })
-          .set(Just 'baz')
-          .should.deep.equal Just {
-            foo: bar: 'baz'
-          }
 
       laws.identity(identity)(property('foo')) {
         runAll: [
