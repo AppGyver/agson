@@ -7,7 +7,6 @@ _ = require 'lodash'
 lenses = require '../../src/agson/lenses'
 traversals = require '../../src/agson/traversals'
 
-laws = require './laws'
 LensLaws = require './LensLaws'
 generators = require './generators'
 
