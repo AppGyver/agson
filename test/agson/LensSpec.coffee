@@ -154,6 +154,11 @@ describe 'agson.lenses', ->
           )
 
     describe 'composition', ->
+      ###
+      TODO: These verify very little because the parametrized case 'foo' is not exercised
+      LensLaws.identity(identity)(property 'foo')
+      LensLaws.associativity(identity, (property 'foo'), identity)
+      ###
 
       laws.identity(identity)(property('foo')) {
         runAll: [
