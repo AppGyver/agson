@@ -3,18 +3,23 @@
 lens = require('./types/Lens').of
 {identity} = require './lenses'
 
-# (ma -> boolean) -> Lens a b
-where = (predm) -> lens "where(#{predm.toString()})", (ma) ->
-  modify: (f) ->
-    unless predm(ma)
-      ma
-    else
-      f ma
-  get: ->
-    unless predm(ma)
-      Nothing()
-    else
-      ma
+# (description: string?, predm: ma -> boolean) -> Lens a b
+where = (description, predm) ->
+  if !predm?
+    predm = description
+    description = predm.toString()
+
+  lens "where(#{description})", (ma) ->
+    modify: (f) ->
+      unless predm(ma)
+        ma
+      else
+        f ma
+    get: ->
+      unless predm(ma)
+        Nothing()
+      else
+        ma
 
 lensListAsString = (list) -> (abl.toString() for abl in list).join ','
 lensMapAsString = (object) -> ("#{key}:#{abl.toString()}" for key, abl of object).join ','
