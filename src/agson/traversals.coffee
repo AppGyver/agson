@@ -7,10 +7,6 @@ traversal = Traversal.of
 
 List = require './types/List'
 
-nothing =
-  modify: Nothing
-  get: Nothing
-
 list = traversal "list", (ta) ->
   modify: (f) -> ta.chain f
   get: -> List.fromArray ta
