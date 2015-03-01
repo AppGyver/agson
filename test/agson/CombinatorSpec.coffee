@@ -39,18 +39,19 @@ describe 'agson.combinators', ->
         jsc.oneof [generators.emptyElements, generators.objectWithoutProperty('foo')]
       )
 
-      {list} = traversals
-      laws.associativity(
-        list
-        whereHasFoo
-        property 'bar'
-      ) {
-        run: [
-          { foo: 'anything', bar: 123 }
-          { bar: 'baz' }
-        ],
-        map: (v) -> v + 123
-      }
+      describe.skip 'with traversals', ->
+        {list} = traversals
+        laws.associativity(
+          list
+          whereHasFoo
+          property 'bar'
+        ) {
+          run: [
+            { foo: 'anything', bar: 123 }
+            { bar: 'baz' }
+          ],
+          map: (v) -> v + 123
+        }
 
   describe 'product', ->
     {product} = combinators
