@@ -33,11 +33,11 @@
     "grunt-mocha-cov": "^0.2.1",
     "jsverify": "^0.5.1",
     "load-grunt-config": "^0.12.0",
-    "load-grunt-tasks": "^0.6.0"
+    "load-grunt-tasks": "^0.6.0",
+    "lodash": "^3.3.1"
   },
   "dependencies": {
-    "data.maybe": "^1.0.3",
-    "lodash": "^3.3.1"
+    "data.maybe": "^1.0.3"
   },
   "config": {
     "blanket": {
