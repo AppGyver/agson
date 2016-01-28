@@ -20,7 +20,7 @@
   "homepage": "https://github.com/AppGyver/agson",
   "devDependencies": {
     "ag-types": "^0.1.5",
-    "chai": "^1.9.1",
+    "chai": "^3.5.0",
     "coffee-script": "^1.7.1",
     "data.validation": "^1.2.0",
     "grunt": "^0.4.5",
